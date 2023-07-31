@@ -8,6 +8,7 @@ function Companies(props) {
     const [currentPage, setCurrentPage] = useState(1);
     const avatarUrl = "https://ui-avatars.com/api/?background=0D8ABC&color=fff&rounded=true&name=";
     const getCompanies = () => {
+        setCompanies([]);
         axios.get(import.meta.env.VITE_BASE_URL + import.meta.env.VITE_GET_ALL_COMPANIES_URL+'?page='+currentPage)
             .then((response) => {
                 setCompanies(response.data.data);
@@ -37,8 +38,11 @@ function Companies(props) {
                             ?
                         <p>Showing results {meta.pagination.current_page} to {meta.pagination.count} of {meta.pagination.total}</p>:''}
                     </div>
+                </div>
+                <div className="col-12">
+                    <div className="fa fa-refresh bg-primary p-2 text-white" onClick={getCompanies}></div>
                     <div className="float-end">
-                        <input type="search" className="form-control" placeholder="Search"/>
+                        <button className="btn btn-primary">Add Company</button>
                     </div>
                 </div>
 
