@@ -131,8 +131,8 @@ function Companies(props) {
                     </tbody>
                 </table>
             </div>
-            <div className="modal fade" ref={exampleModal} id="addCompanyModal" tabIndex="-1" aria-labelledby="exampleModalLabel"  aria-hidden="true">
-            <div className="modal-dialog">
+            <div className="modal fade " ref={exampleModal} id="addCompanyModal" tabIndex="-1" aria-labelledby="exampleModalLabel"  aria-hidden="true">
+            <div className="modal-dialog modal-xl">
                 <AddCompanyModal ref={companyModal}></AddCompanyModal>
             </div>
             </div>
