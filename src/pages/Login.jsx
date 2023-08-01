@@ -30,7 +30,6 @@ const Login = ({ childern }) => {
                         localStorage.setItem("user",JSON.stringify(responseUser.data.data));
                         window.location.reload();
 
-
                     }).catch((err)=>{
                         console.log(err);
                     })

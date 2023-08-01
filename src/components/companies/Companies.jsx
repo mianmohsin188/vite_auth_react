@@ -1,12 +1,24 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import axios from "axios";
 import Swal from "sweetalert2";
+import addCompanyModal from "./Add/AddCompanyModal.jsx";
+import alert from "bootstrap/js/src/alert.js";
+import { Modal } from 'bootstrap'
+import AddCompanyModal from "./Add/AddCompanyModal.jsx";
+
 
 function Companies(props) {
     const [companies, setCompanies] = useState([]);
     const [meta, setMeta] = useState({});
     const [currentPage, setCurrentPage] = useState(1);
     const avatarUrl = "https://ui-avatars.com/api/?background=0D8ABC&color=fff&rounded=true&name=";
+
+    const [modal, setModal] = useState(null)
+    const exampleModal = useRef()
+    const companyModal = useRef()
+    let groupedPermissions = [];
+
+
     const getCompanies = () => {
         setCompanies([]);
         axios.get(import.meta.env.VITE_BASE_URL + import.meta.env.VITE_GET_ALL_COMPANIES_URL+'?page='+currentPage)
@@ -18,13 +30,32 @@ function Companies(props) {
                 console.log(error);
             });
     }
+    const getAllGroupedPermissions = () => {
+        axios.get(import.meta.env.VITE_BASE_URL + import.meta.env.VITE_GET_ALL_GROUPED_PERMISSIONS_URL)
+            .then((response) => {
+              groupedPermissions=response.data.data
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+    const addCompany = () => {
+        console.log(companyModal.current)
+        companyModal.current.resetForm();
+        companyModal.current.companyModelInstanse;
+        modal.show();
+
+    }
     const editDetail = (company) => {
         alert(company.id);
       //  props.history.push(`/companies/edit/${company.id}`);
     }
 
     useEffect(() => {
-        getCompanies()
+        getCompanies();
+        setModal(
+            new Modal(exampleModal.current)
+        )
     }, []);
 
     return (
@@ -42,7 +73,9 @@ function Companies(props) {
                 <div className="col-12">
                     <div className="fa fa-refresh bg-primary p-2 text-white" onClick={getCompanies}></div>
                     <div className="float-end">
-                        <button className="btn btn-primary">Add Company</button>
+                        <button type="button" onClick={()=>addCompany()} className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            Add Company
+                        </button>
                     </div>
                 </div>
 
@@ -97,6 +130,11 @@ function Companies(props) {
 
                     </tbody>
                 </table>
+            </div>
+            <div className="modal fade" ref={exampleModal} id="addCompanyModal" tabIndex="-1" aria-labelledby="exampleModalLabel"  aria-hidden="true">
+            <div className="modal-dialog">
+                <AddCompanyModal ref={companyModal}></AddCompanyModal>
+            </div>
             </div>
         </>
     );
