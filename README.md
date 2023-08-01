@@ -1,5 +1,5 @@
-# Auth in React + Vite
-
+# Auth in React + Vite (Bootstrap 5)
+# Please take pull from dev main will not work
 This project provides a complete auth using Rract+Vite local storage (not redux) and middleware to avoid accessing login page after loggedIn.
 <p>Bootstrap 5</p>
 <p>Fonntawesome</p>
