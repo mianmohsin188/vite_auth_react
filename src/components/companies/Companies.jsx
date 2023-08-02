@@ -16,8 +16,7 @@ function Companies(props) {
     const [modal, setModal] = useState(null)
     const exampleModal = useRef()
     const companyModal = useRef()
-    let groupedPermissions = [];
-
+    const [groupedPermissions,setGroupedPermissions] = useState([]);
 
     const getCompanies = () => {
         setCompanies([]);
@@ -31,20 +30,24 @@ function Companies(props) {
             });
     }
     const getAllGroupedPermissions = () => {
-        axios.get(import.meta.env.VITE_BASE_URL + import.meta.env.VITE_GET_ALL_GROUPED_PERMISSIONS_URL)
+        axios.post(import.meta.env.VITE_BASE_URL + import.meta.env.VITE_GET_ALL_GROUPED_PERMISSIONS_URL)
             .then((response) => {
-              groupedPermissions=response.data.data
+              setGroupedPermissions(response.data.data);
             })
             .catch((error) => {
                 console.log(error);
             });
     }
     const addCompany = () => {
-        console.log(companyModal.current)
-        companyModal.current.resetForm();
-        companyModal.current.companyModelInstanse;
-        modal.show();
+        /*setTimeout(() => {
+            companyModal.current.resetForm();
+            companyModal.current.companyModelInstanse;
+            modal.show();
+        }, 1000);*/
 
+        companyModal.current.resetForm();
+        companyModal.current.setPermissions(groupedPermissions)
+        modal.show();
     }
     const editDetail = (company) => {
         alert(company.id);
@@ -53,6 +56,7 @@ function Companies(props) {
 
     useEffect(() => {
         getCompanies();
+        getAllGroupedPermissions()
         setModal(
             new Modal(exampleModal.current)
         )

@@ -1,6 +1,5 @@
 import React, { forwardRef, useImperativeHandle, useState } from 'react';
 import { Button, Modal } from 'bootstrap';
-import alert from "bootstrap/js/src/alert.js";
 import axios from "axios";
 import companies from "../Companies.jsx";
 import * as sweetalert2 from "sweetalert2";
@@ -21,6 +20,7 @@ const AddCompanyModal = forwardRef((props, ref) => {
    const errors={};
     const [errorss,setErrorss] = useState([]);
     const [screenStatus,setSreenStatus] = useState(1);
+    const [groupedPermissionsList,setgroupedPermissionsList] = useState([]);
 
     const saveForm = (currentScreen) => {
         if (currentScreen == 1) {
@@ -71,12 +71,8 @@ const AddCompanyModal = forwardRef((props, ref) => {
             }
         }
         if (currentScreen == 2) {
-            console.log(screenStatus);
-
-
-
             let screen_key_errors = ['display_name', 'email', 'password', 'status'];
-            console.log(formData.display_name);
+
             if (formData.display_name=="") {
                 let temp =[];
                 temp.push("Display Name is required");
@@ -100,9 +96,6 @@ const AddCompanyModal = forwardRef((props, ref) => {
                 temp.push("Status is required");
                 errors['status']=temp;
             }
-            console.log(errors);
-
-
             setErrorss(errors);
             if(errors && Object.keys(errors).length>0) {
                 screen_key_errors.forEach(value => {
@@ -116,6 +109,7 @@ const AddCompanyModal = forwardRef((props, ref) => {
             }
         }
         if (currentScreen == 3) {
+
             if (formData.permissions.length == 0) {
                 let temp =[];
                 temp.push("Please select at least one permission");
@@ -134,14 +128,25 @@ const AddCompanyModal = forwardRef((props, ref) => {
             [name]: value,
         }));
     };
-    const handleDropSelect = (e) => {
-        const handleChange = (e) => {
-            setFormData((prevData) => ({
-                ...prevData,
-                [e.target.name]: e.target.value
-            }))
-        };
+    function handleChange(evt) {
+        const value = evt.target.value;
+        setFormData((prevData) => ({
+            ...prevData,
+            [evt.target.name]: value,
+        }))
     }
+    function handleCheckChange(evt) {
+        const value = evt.target.value;
+        alert(value);
+        setFormData((prevData) => ({
+            ...prevData,
+            [evt.target.name]: value,
+        }))
+
+
+    }
+
+
 
 
     const handleFormReset = () => {
@@ -161,10 +166,17 @@ const AddCompanyModal = forwardRef((props, ref) => {
     };
 
 
+
+    const setPermissionsData = (permissions) => {
+        setgroupedPermissionsList(permissions)
+    }
+
+
     // Expose functions to parent using useImperativeHandle
     useImperativeHandle(ref, () => ({
-        getFormData:  formData,
+        setPermissions:  setPermissionsData,
         resetForm: handleFormReset,
+
     }));
 
     return (
@@ -329,7 +341,7 @@ const AddCompanyModal = forwardRef((props, ref) => {
                             onChange={handleInputChange}
                         />*/}
 
-                        <select onSelect={handleDropSelect} value={formData.status} className="form-select " aria-label="Default select example">
+                        <select name="status" onChange={handleChange} value={formData.status} className="form-select " aria-label="Default select example">
                             <option value="">-- Select Status --</option>
                             <option value="1">Active</option>
                             <option value="2">Inactive</option>
@@ -354,19 +366,62 @@ const AddCompanyModal = forwardRef((props, ref) => {
             <div className="modal-content">
                 <div className="modal-header">
                     <h5 className="modal-title" id="staticBackdropLabel">User Permissions</h5>
+
                     <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div className="modal-body">
 
+                    {
+                        groupedPermissionsList.map((value, index) => {
+                            return (
+                                <>
+                                    <div className="card m-3">
+                                        <h5 className="card-header">
+                                            <label> <input className="form-check-input mb-1" type="checkbox"  name={Object.keys(value)} value={(Object.keys(value))} onChange={handleCheckChange} /> {(Object.keys(value).toString()).charAt(0).toUpperCase() + (Object.keys(value).toString()).slice(1)}</label>
+                                        </h5>
+                                        <div className="card-body">
+                                            <div className="row ">
+                                            {
+                                                value[(Object.keys(value))].length>0
+                                                &&
+                                                value[(Object.keys(value))].map((value2, index2) => {
+                                                    return (
 
+                                                        <div class="col-md-3  mb-2">
+                                                            <label>
+                                                            <input
+                                                                className="form-check-input pt-1"
+                                                                type="checkbox"
+                                                                name={value2.name}
+                                                                value={value2.permission_id}
+                                                                onChange={handleCheckChange}
+                                                            /> { value2.name }
+                                                            </label>
+                                                        </div>
+                                                    )
+                                                })
+                                            }
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+
+                                 </>
+
+                            )
+                        })
+                    }
 
                 </div>
                 <div className="modal-footer">
                     <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button" onClick={()=>saveForm(3)} className="btn btn-primary">Save</button>
                 </div>
-            </div>:''}
-
+            </div>
+                :
+                ''
+            }
         </div>
     );
 });
