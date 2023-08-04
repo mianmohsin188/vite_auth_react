@@ -19,7 +19,7 @@ const AddCompanyModal = forwardRef((props, ref) => {
     });
    const errors={};
     const [errorss,setErrorss] = useState([]);
-    const [screenStatus,setSreenStatus] = useState(1);
+    const [screenStatus,setSreenStatus] = useState(3);
     const [groupedPermissionsList,setgroupedPermissionsList] = useState([]);
 
     const saveForm = (currentScreen) => {
@@ -135,15 +135,194 @@ const AddCompanyModal = forwardRef((props, ref) => {
             [evt.target.name]: value,
         }))
     }
-    function handleCheckChange(evt) {
-        const value = evt.target.value;
-        alert(value);
-        setFormData((prevData) => ({
-            ...prevData,
-            [evt.target.name]: value,
-        }))
+    function handleCheckChange(evt,index) {
+        groupedPermissionsList.forEach((item) => {
+           if((Object.keys(item)[0])==evt.target.value) {
+               if (evt.target.checked) {
+                   item[(Object.keys(item)[0])].map((value2, index2) => {
+                       setFormData(
+                           (prevData) => ({
+                               ...prevData,
+                               ...prevData.permissions.push(value2.permission_id)
+                           }))
+                   })
+                   console.log(formData)
+               }
+               else {
+                   // uncheck condition unselect all
+                   console.log("Form Data Permisson::");
+                   console.log(formData.permissions);
+                   let finalPermission = formData.permissions;
+                   console.log(evt.target.value);
+                   console.log(Object.keys(item)[0]);
+                   // formData.permissions = [];
+                   // setFormData(
+                   //     (prevData) => ({
+                   //         ...prevData,
+                   //         ...prevData.permissions = []
+                   //     })
+                   // )
+                   // return false;
+                   if((Object.keys(item)[0])==evt.target.value){
+
+                       groupedPermissionsList.forEach((v,i)=>{
+                         if((Object.keys(v)[0])==evt.target.value) {
+                             console.log("Permission Name Matached");
+
+                             let tempObject= v[(Object.keys(v)[0])];
+                             console.log(tempObject.length)
+                             if(tempObject.length>0) {
+
+                                 let permissions_to_delete=[];
+                                 let final_permissions=[];
+
+                                 tempObject.forEach((key,ind) => {
+                                     permissions_to_delete.push(key.permission_id);
+                                 });
+
+                                 // let permissions = ["XbPW7awNkzl83LD6","39n0Z12OZGKERJgW"]
+                                 final_permissions = formData.permissions.filter(x => !permissions_to_delete.includes(x));
+
+                                 console.log("final_permissions");
+
+                                 formData.permissions=[];
+                                 formData.permissions = final_permissions;
+                                 setFormData(
+                                     (prevData) => ({
+                                         ...prevData,
+                                         ...prevData.permissions=final_permissions
+                                     }))
+
+                                 console.log("formData.permissions");
+                                 console.log(formData)
+
+                                 return false;
+                                 // formData.permissions.forEach((permissionID,j) =>{
+                                 //     console.log("KEY");
+                                 //     tempObject.forEach((key,ind) => {
+                                 //         console.log(permissionID + " INDEX  :: " + j +" == " + key.permission_id);
+                                 //         if(permissionID == key.permission_id)
+                                 //         {
+                                 //             finalPermission.push()
+                                 //             console.log(key.permission_id + " Permission Matched!!!");
+                                 //
+                                 //             finalPermission.splice(j, 1);
+                                 //             console.log("FINAL PERMISSION" + permissionID);
+                                 //             console.log();
+                                 //             // var index = formData.permissions.indexOf(permissionId);
+                                 //             // console.log("INDEX" + index);
+                                 //
+                                 //             // if (index !== -1) {
+                                 //             //     formData.permissions.splice(index, 1);
+                                 //             //     console.log("FINAL PERMISSION" + permissionID);
+                                 //             //     console.log(formData.permissions);
+                                 //             // }
+                                 //         }
+                                 //     });
+                                 // });
 
 
+
+                                 // tempObject.map((value3, index3) => {
+                                 //     formData.permissions.filter(e => !value3.permission_id.includes(e));
+                                 //     // permissions_to_delete.push(value3.permission_id);
+                                 // })
+
+
+                                 return false;
+
+                                 console.log(permissions_to_delete);
+                                 final_permissions = formData.permissions.filter(e => !permissions_to_delete.includes(e));
+                                console.log("final_permissions");
+                                console.log(final_permissions);
+
+                                 let blank_error =[];
+                                 setFormData(
+                                     (prevData) => ({
+                                         ...prevData,
+                                         ...prevData.permissions.push(blank_error)
+                                     })
+                                 )
+                                 console.log(formData.permissions);
+                                 return false;
+
+
+
+                                 tempObject.map((value3, index3) => {
+                                     let data = [];
+
+                                    if(formData.permissions.includes(value3.permission_id)) {
+
+                                        setFormData(
+                                            (prevData) => ({
+                                                ...prevData,
+                                                ...prevData.permissions.filter(e => e != value3.permission_id)
+                                            }))
+                                        console.log(formData.permissions);
+                                    }
+                                 })
+                             }
+                            /* .map((value3, index3) => {
+                                 console.log(value3.permission_id)
+                                 alert(value3.permission_id);
+                                 console.log(formData.permissions);
+                                 setFormData(
+                                     (prevData) => ({
+                                         ...prevData,
+                                         ...prevData.permissions.splice(value3.permission_id, 1)
+                                     }))
+                             })*/
+                         }
+                       });
+
+
+                   }
+                   /*item[(Object.keys(item))].map((value2, index2) => {
+                       alert(evt.target.value);
+                       if( (Object.keys(item))==evt.target.value && formData.permissions.includes(value2.permission_id)) {
+                           setFormData(
+                               (prevData) => ({
+                                   ...prevData,
+                                   ...prevData.permissions.splice(value2.permission_id, 1)
+                               }));
+                       }
+
+                   })*/
+               }
+           }
+          /* else{
+               if (evt.target.checked) {
+                   alert("dsfsdf")
+                   item[(Object.keys(item))].map((value2, index2) => {
+                       /!*if(formData.permissions.includes(evt.target.value)) {
+                           formData.permissions.push(value2);
+                       }*!/
+                       setFormData(
+                       (prevData) => ({
+                           ...prevData,
+                           permissions: [...prevData.permissions, value2.permission_id]
+                       })
+                       )
+                   })
+
+               }
+               else
+               {
+                   item[(Object.keys(item))].map((value2, index2) => {
+                       if(formData.permissions.includes(evt.target.value)) {
+                     //      formData.permissions.splice(index2, 1);
+                           setFormData(
+                               (prevData) => ({
+                                   ...prevData,
+                                   permissions: [...prevData.permissions.splice(value2, 1)]
+                               })
+                           )
+                       }
+
+                   })
+               }
+           }*/
+    });
     }
 
 
@@ -162,7 +341,7 @@ const AddCompanyModal = forwardRef((props, ref) => {
             permissions: []
         });
         setErrorss({});
-        setSreenStatus(1);
+        setSreenStatus(3);
     };
 
 
@@ -377,7 +556,7 @@ const AddCompanyModal = forwardRef((props, ref) => {
                                 <>
                                     <div className="card m-3">
                                         <h5 className="card-header">
-                                            <label> <input className="form-check-input mb-1" type="checkbox"  name={Object.keys(value)} value={(Object.keys(value))} onChange={handleCheckChange} /> {(Object.keys(value).toString()).charAt(0).toUpperCase() + (Object.keys(value).toString()).slice(1)}</label>
+                                            <label> <input className="form-check-input mb-1" type="checkbox" id={Object.keys(value)+'_'+index}  name={Object.keys(value)} value={(Object.keys(value))} onChange={()=>handleCheckChange(event,index)} /> {(Object.keys(value).toString()).charAt(0).toUpperCase() + (Object.keys(value).toString()).slice(1)}</label>
                                         </h5>
                                         <div className="card-body">
                                             <div className="row ">
@@ -393,6 +572,8 @@ const AddCompanyModal = forwardRef((props, ref) => {
                                                                 className="form-check-input pt-1"
                                                                 type="checkbox"
                                                                 name={value2.name}
+                                                                id={value[(Object.keys(value))]+'_'+index2}
+                                                                checked={formData.permissions.includes(value2.permission_id)}
                                                                 value={value2.permission_id}
                                                                 onChange={handleCheckChange}
                                                             /> { value2.name }
