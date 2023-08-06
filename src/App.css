@@ -1,3 +1,7 @@
+
 .card-header{
     background-color: #3c4b64;!important;
+
+.dropdown-menu {
+    --bs-dropdown-min-width: 6.5rem!important;
 }
