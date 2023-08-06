@@ -15,9 +15,9 @@ function Router(props) {
     return (
         <div>
             <Routes>
-                {/*Products Component name is Branch*/}
                 <Route path="/" element={props.isLoggedIn===false ? <Navigate to="/login"></Navigate> : <Main component={<Dashboard></Dashboard>}></Main>}/>
-                <Route path="/products" element={props.isLoggedIn===false ? <Navigate to="/login"></Navigate> : <Main component={<Branches></Branches>}></Main>}/>
+                <Route path="/companies" element={props.isLoggedIn===false ? <Navigate to="/login"></Navigate> : <Main component={<Companies></Companies>}></Main>}/>
+                <Route path="/branches" element={props.isLoggedIn===false ? <Navigate to="/login"></Navigate> : <Main component={<Branches></Branches>}></Main>}/>
                 <Route path="/login" element={props.isLoggedIn===false ? <Login></Login> : <Navigate to="/"/>}/>
                 <Route path="*" element={props.isLoggedIn===false ? <Navigate to='/login'></Navigate> : <Navigate to="/"/>}/>
 

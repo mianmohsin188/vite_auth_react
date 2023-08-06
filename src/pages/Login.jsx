@@ -7,7 +7,7 @@ const Login = ({ childern }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [user, setUser] = useState('');
-    const [errors,setErrors] = useState({});
+    const [errors,setErrors] = useState([]);
     const navigate = useNavigate();
 
     const handleLogin = () => {
@@ -22,39 +22,26 @@ const Login = ({ childern }) => {
                 password
             })
                 .then((res)=>{
-                    console.log(res);
-                    let token =(res.data.token);
-                    let user_data={
-                        email: res.data.email,
-                        firstName: res.data.firstName,
-                        gender: res.data.gender,
-                        id: res.data.id,
-                        image: res.data.image,
-                        lastName: res.data.lastName,
-                        username:res.data.username
-                    }
+                    let token =(res.data.access_token);
                     localStorage.setItem("token","Bearer "+token);
-                    localStorage.setItem("user",JSON.stringify(user_data));
-                    window.location.reload();
+                    axios.get(import.meta.env.VITE_BASE_URL + import.meta.env.VITE_PROFILE_URL)
+                        .then((responseUser)=>{
+                      //  localStorage.setItem("token","Bearer "+token);
+                        localStorage.setItem("user",JSON.stringify(responseUser.data.data));
+                        window.location.reload();
 
-                })
-                .catch((err)=>{
+                    }).catch((err)=>{
+                        console.log(err);
+                    })
 
-                if(err.response.status===403 || err.response.status===400){
-
-                    let errorsObject={
-                        'username':err.response.data.message
-                    };
-
-                    setErrors(errorsObject);
-
+                }).catch((err)=>{
+                    console.log(err);
+                if(err.response.data.errors.length==0){
+                    err.response.data.errors['username']=err.response.data.message;
+                    setErrors(err.response.data.errors);
                 }
                 else {
-                    let errorsObject={
-                        'username':err.response.data.message
-                    };
-
-                    setErrors(errorsObject);
+                    setErrors(err.response.data.errors);
                 }
 
             })
@@ -84,7 +71,6 @@ const Login = ({ childern }) => {
                         </div>
                         <div className="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
                             <h2 className="mb-4">Login</h2>
-                            {errors && errors['username']?   <span className="text-danger"><b>{errors['username']}</b></span>:''}
                             <div className="form-outline mb-4">
                                 <label className="form-label" htmlFor="form1Example13">Email<sup className="text-danger"><b>*</b></sup></label>
                                 <input type="email"
@@ -92,7 +78,7 @@ const Login = ({ childern }) => {
                                        placeholder="-- Enter Email address --"
                                        className="form-control form-control-lg"
                                        onChange={(e) => setUsername(e.target.value)}/>
-
+                                <span className="text-danger">{errors['username']}</span>
                             </div>
 
 
@@ -104,7 +90,7 @@ const Login = ({ childern }) => {
                                        className="form-control form-control-lg"
                                        value={password}
                                        onChange={(e) => setPassword(e.target.value)}/>
-
+                                <span className="text-danger">{errors['password']}</span>
                             </div>
 
                             {/*<div className="d-flex mb-4">

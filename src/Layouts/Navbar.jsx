@@ -2,8 +2,8 @@ import React from "react";
 
 function Navbar() {
     let user = JSON.parse(localStorage.getItem("user"));
-    user==null?window.location.reload():user.username=user.username;
-    let image_source="https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=" +user.username+ "&rounded=true"
+    user==null?window.location.reload():user.name=user.name;
+    let image_source="https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=" +user.name+ "&rounded=true"
     const logout = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
@@ -14,7 +14,7 @@ function Navbar() {
             {/* A JSX comment */}
             <nav className="navbar navbar-expand-lg navbar-dark bg-dark p-3">
                 <div className="container-fluid">
-                    <a className="navbar-brand" href="#">Brand Logo</a>
+                    <a className="navbar-brand" href="#">Digitt</a>
                     <button className="navbar-toggler" type="button" data-bs-toggle="collapse"
                             data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false"
                             aria-label="Toggle navigation">
