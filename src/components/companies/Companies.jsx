@@ -2,9 +2,9 @@ import React, {useEffect, useRef, useState} from 'react';
 import axios from "axios";
 import Swal from "sweetalert2";
 import addCompanyModal from "./Add/AddCompanyModal.jsx";
-import alert from "bootstrap/js/src/alert.js";
 import { Modal } from 'bootstrap'
 import AddCompanyModal from "./Add/AddCompanyModal.jsx";
+import UpdateCompanyModal from "./Update/UpdateCompanyModal.jsx";
 
 
 function Companies(props) {
@@ -14,8 +14,11 @@ function Companies(props) {
     const avatarUrl = "https://ui-avatars.com/api/?background=0D8ABC&color=fff&rounded=true&name=";
 
     const [modal, setModal] = useState(null)
+    const [updateDetailModal, setupdateDetailModal] = useState(null)
     const exampleModal = useRef()
+    const exampleUpdateDetailModal = useRef()
     const companyModal = useRef()
+    const updateDetailModalRef = useRef()
     const [groupedPermissions,setGroupedPermissions] = useState([]);
 
     const getCompanies = () => {
@@ -50,8 +53,35 @@ function Companies(props) {
         modal.show();
     }
     const editDetail = (company) => {
+       updateDetailModalRef.current.resetErrors();
+        updateDetailModalRef.current.setFormData(previous => ({
+            ...previous,
+            id: company.id
+        }))
+       updateDetailModalRef.current.setFormData(previous => ({
+           ...previous,
+           company_name: company.company_name
+       }));
+        updateDetailModalRef.current.setFormData(previous => ({
+            ...previous,
+            status: company.status
+        }));
+        updateDetailModalRef.current.setFormData(previous => ({
+            ...previous,
+            object: company.object
+        }))
+        updateDetailModalRef.current.setFormData(previous => ({
+            ...previous,
+            user: company.user
+        }))
+        updateDetailModalRef.current.setFormData(previous => ({
+            ...previous,
+            user_id: company.user_id
+        }))
+        updateDetailModal.show();
+    }
+    const editPermission = (company) => {
         alert(company.id);
-      //  props.history.push(`/companies/edit/${company.id}`);
     }
 
     useEffect(() => {
@@ -59,8 +89,12 @@ function Companies(props) {
         getAllGroupedPermissions()
         setModal(
             new Modal(exampleModal.current)
+        ),
+        setupdateDetailModal(
+            new Modal(exampleUpdateDetailModal.current)
         )
     }, []);
+
 
     return (
         <>
@@ -84,7 +118,7 @@ function Companies(props) {
                 </div>
 
             </div>
-            <div className="table-responsive">
+            <div className="table-responsive mt-3">
                 <table className="table border mb-0">
                     <thead className="table-light fw-semibold">
                     <tr className="align-middle">
@@ -123,8 +157,8 @@ function Companies(props) {
                             <td>
 
                                 <div>
-                                    <span onClick={()=>editDetail(company)} className="fa fa-1x fa-eye m-2"></span>
-                                    <span className="fa fa-1x fa-trash"></span>
+                                    <span onClick={()=>editPermission(company)} className="fa fa-1x fa-eye m-2"></span>
+                                    <span data-bs-toggle="modal" data-bs-target="#exampleUpdateDetailModal" onClick={()=>editDetail(company)}  className="fa fa-1x fa-pencil"></span>
                                 </div>
                             </td>
 
@@ -135,10 +169,15 @@ function Companies(props) {
                     </tbody>
                 </table>
             </div>
-            <div className="modal fade " ref={exampleModal} id="addCompanyModal" tabIndex="-1" aria-labelledby="exampleModalLabel"  aria-hidden="true">
+            <div className="modal fade "  ref={exampleModal} id="addCompanyModal" tabIndex="-1" aria-labelledby="exampleModalLabel"  aria-hidden="true">
             <div className="modal-dialog modal-xl">
-                <AddCompanyModal ref={companyModal}></AddCompanyModal>
+                <AddCompanyModal companies={getCompanies} companyModal={modal} ref={companyModal}></AddCompanyModal>
             </div>
+            </div>
+            <div className="modal fade "  ref={exampleUpdateDetailModal} id="addCompanyModal" tabIndex="-1" aria-labelledby="updateDetailModalLabel"  aria-hidden="true">
+                <div className="modal-dialog modal-xl">
+                    <UpdateCompanyModal ref={updateDetailModalRef} updateDetailModal={updateDetailModal} companies={getCompanies}></UpdateCompanyModal>
+                </div>
             </div>
         </>
     );

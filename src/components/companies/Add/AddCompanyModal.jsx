@@ -4,7 +4,8 @@ import axios from "axios";
 import companies from "../Companies.jsx";
 import * as sweetalert2 from "sweetalert2";
 import Swal from "sweetalert2";
-import data from "bootstrap/js/src/dom/data.js"; // Import Bootstrap components
+import data from "bootstrap/js/src/dom/data.js";
+import modal from "bootstrap/js/src/modal.js"; // Import Bootstrap components
 
 const AddCompanyModal = forwardRef((props, ref) => {
 
@@ -182,225 +183,258 @@ const AddCompanyModal = forwardRef((props, ref) => {
             }
             else {
                 formData.permissions = Object.keys(checkedItems).filter((key) => checkedItems[key] === true)
-                console.log(formData)
-            }
+                console.log(formData);
+                 axios.post(import.meta.env.VITE_BASE_URL + import.meta.env.VITE_ADD_COMPANY_URL, formData).
+             then((response) => {
+                 console.log(response);
+                 Swal.fire("Success", "Company Added Successfully", "success");
+                 props.companies();
+                 props.companyModal.hide();
 
-        }
+             }).catch((error_data) => {
+                 console.log(error_data.response.data.errors);
+                     setErrorss(error_data.response.data.errors);
+                     let screen_key_errors = ['company_name', 'branch_name', 'department_name', 'designation_name'];
+                     let screen_key_errors_screen_2 = ['display_name', 'email', 'password', 'status'];
+                     let screen_key_errors_screen_3 = ['permissions'];
 
-        }
+                     if(errorss && Object.keys(errorss).length>0) {
+                         Object.keys(errorss).forEach(value => {
+                             if (screen_key_errors.includes(value)) {
+                                 setSreenStatus(1);
+                             }
+                             else if (screen_key_errors_screen_2.includes(value)) {
 
+                                 setSreenStatus(2);
+                             }
+                             else if (screen_key_errors_screen_3.includes(value)) {
 
+                                 setSreenStatus(3);
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-    };
-    function handleChange(evt) {
-        const value = evt.target.value;
-        setFormData((prevData) => ({
-            ...prevData,
-            [evt.target.name]: value,
-        }))
-    }
+                             }
+                         })
 
+                     }
+             })
 
+             }
 
+         }
 
-    const handleFormReset = () => {
-        setFormData({
-            company_name: '',
-            branch_name: '',
-            department_name: '',
-            designation_name: '',
-            display_name: "",
-            email: '',
-            password: '',
-            status: '',
-            permissions: []
-        });
-        setErrorss({});
-        setCheckedItems({});
-        setSreenStatus(1);
-    };
+         }
 
 
 
-    const setPermissionsData = (permissions) => {
-        setgroupedPermissionsList(permissions)
-    }
+     const handleInputChange = (e) => {
+         const { name, value } = e.target;
+         setFormData((prevData) => ({
+             ...prevData,
+             [name]: value,
+         }));
+     };
+     function handleChange(evt) {
+         const value = evt.target.value;
+         setFormData((prevData) => ({
+             ...prevData,
+             [evt.target.name]: value,
+         }))
+     }
 
 
-    // Expose functions to parent using useImperativeHandle
-    useImperativeHandle(ref, () => ({
-        setPermissions:  setPermissionsData,
-        resetForm: handleFormReset,
 
-    }));
 
-    return (
-        <div>
-            {screenStatus==1?
-            <div className="modal-content">
-                <div className="modal-header">
-                    <h5 className="modal-title" id="staticBackdropLabel">Company Details</h5>
-                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div className="modal-body">
+     const handleFormReset = () => {
+         setFormData({
+             company_name: '',
+             branch_name: '',
+             department_name: '',
+             designation_name: '',
+             display_name: "",
+             email: '',
+             password: '',
+             status: '',
+             permissions: []
+         });
+         setErrorss({});
+         setCheckedItems({});
+         setSreenStatus(1);
+     };
 
-                    <div className="mb-3">
-                    <label className="form-label">Company Name<sup className="text-danger"><b>*</b></sup></label>
-                    <input
-                        type="text"
-                        className="form form-control"
-                        name="company_name"
-                        placeholder="-- Enter Company Name --"
-                        value={formData.company_name}
-                        onChange={handleInputChange}
-                    />
 
-                        { errorss['company_name']
-                            ?
-                            <span className="text-danger">{errorss['company_name'][0]}</span>
-                            :
-                            ''
-                        }
 
-                </div>
+     const setPermissionsData = (permissions) => {
+         setgroupedPermissionsList(permissions)
+     }
 
-                    <div className="mb-3">
-                        <label className="form-label">Branch Name<sup className="text-danger"><b>*</b></sup> </label>
-                        <input
-                            type="text"
-                            name="branch_name"
-                            placeholder="-- Enter Branch Name --"
-                            className="form form-control"
-                            value={formData.branch_name}
-                            onChange={handleInputChange}
-                        />
-                        { errorss['branch_name']
-                            ?
-                            <span className="text-danger">{errorss['branch_name'][0]}</span>
-                            :
-                            ''
-                        }
-                    </div>
-                    <div className="mb-3">
-                        <label className="form-label">Department Name<sup className="text-danger"><b>*</b></sup></label>
-                        <input
-                            type="text"
-                            name="department_name"
-                            placeholder="-- Enter Department Name --"
-                            className="form form-control"
-                            value={formData.department_name}
-                            onChange={handleInputChange}
-                        />
-                        { errorss['department_name']
-                            ?
-                            <span className="text-danger">{errorss['department_name'][0]}</span>
-                            :
-                            ''
-                        }
 
-                    </div>
-                    <div className="mb-3">
-                        <label className="form-label">Designation Name<sup className="text-danger"><b>*</b></sup></label>
-                        <input
-                            type="text"
-                            name="designation_name"
-                            placeholder="-- Enter Designation Name --"
-                            className="form form-control"
-                            value={formData.designation_name}
-                            onChange={handleInputChange}
-                        />
-                        { errorss['designation_name']
-                            ?
-                            <span className="text-danger">{errorss['designation_name'][0]}</span>
-                            :
-                            ''
-                        }
-                    </div>
+     // Expose functions to parent using useImperativeHandle
+     useImperativeHandle(ref, () => ({
+         setPermissions:  setPermissionsData,
+         resetForm: handleFormReset,
 
-                </div>
-                <div className="modal-footer">
-                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" onClick={()=>saveForm(1)}  className="btn btn-primary">Save</button>
-                </div>
-            </div>:''}
-            {screenStatus==2?
-            <div className="modal-content">
-                <div className="modal-header">
-                    <h5 className="modal-title" id="staticBackdropLabel">User Details</h5>
-                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div className="modal-body">
+     }));
 
-                    <div className="mb-3">
-                        <label className="form-label">Display Name<sup className="text-danger"><b>*</b></sup></label>
-                        <input
-                            type="text"
-                            className="form form-control"
-                            name="display_name"
-                            placeholder="-- Enter Display Name --"
-                            value={formData.display_name}
-                            onChange={handleInputChange}
-                        />
-                        { errorss['display_name']
-                            ?
-                        <span className="text-danger">{errorss['display_name'][0]}</span>
-                            :
-                            ''
-                        }
+     return (
+         <div>
+             {screenStatus==1?
+             <div className="modal-content">
+                 <div className="modal-header">
+                     <h5 className="modal-title" id="staticBackdropLabel">Company Details</h5>
+                     <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                 </div>
+                 <div className="modal-body">
 
-                    </div>
+                     <div className="mb-3">
+                     <label className="form-label">Company Name<sup className="text-danger"><b>*</b></sup></label>
+                     <input
+                         type="text"
+                         className="form form-control"
+                         name="company_name"
+                         placeholder="-- Enter Company Name --"
+                         value={formData.company_name}
+                         onChange={handleInputChange}
+                     />
 
-                    <div className="mb-3">
-                        <label className="form-label">Email<sup className="text-danger"><b>*</b></sup> </label>
-                        <input
-                            type="email"
-                            name="email"
-                            placeholder="-- Enter Email --"
-                            className="form form-control"
-                            value={formData.email}
-                            onChange={handleInputChange}
-                        />
-                        { errorss['email']
-                            ?
-                            <span className="text-danger">{errorss['email'][0]}</span>
-                            :
-                            ''
-                        }
-                    </div>
-                    <div className="mb-3">
-                        <label className="form-label">Password<sup className="text-danger"><b>*</b></sup></label>
-                        <input
-                            type="password"
-                            name="password"
-                            placeholder="-- Enter password--"
-                            className="form form-control"
-                            value={formData.password}
-                            onChange={handleInputChange}
-                        />
-                        { errorss['password']
-                            ?
-                            <span className="text-danger">{errorss['password'][0]}</span>
-                            :
-                            ''
-                        }
+                         { errorss['company_name']
+                             ?
+                             <span className="text-danger">{errorss['company_name'][0]}</span>
+                             :
+                             ''
+                         }
 
-                    </div>
-                    <div className="mb-3">
-                        <label className="form-label">Status<sup className="text-danger"><b>*</b></sup></label>
-                        {/*<input
-                            type="text"
-                            name="department_name"
-                            placeholder="-- Enter Designation Name --"
-                            className="form form-control mb-3"
-                            value={formData.designation_name}
-                            onChange={handleInputChange}
-                        />*/}
+                 </div>
+
+                     <div className="mb-3">
+                         <label className="form-label">Branch Name<sup className="text-danger"><b>*</b></sup> </label>
+                         <input
+                             type="text"
+                             name="branch_name"
+                             placeholder="-- Enter Branch Name --"
+                             className="form form-control"
+                             value={formData.branch_name}
+                             onChange={handleInputChange}
+                         />
+                         { errorss['branch_name']
+                             ?
+                             <span className="text-danger">{errorss['branch_name'][0]}</span>
+                             :
+                             ''
+                         }
+                     </div>
+                     <div className="mb-3">
+                         <label className="form-label">Department Name<sup className="text-danger"><b>*</b></sup></label>
+                         <input
+                             type="text"
+                             name="department_name"
+                             placeholder="-- Enter Department Name --"
+                             className="form form-control"
+                             value={formData.department_name}
+                             onChange={handleInputChange}
+                         />
+                         { errorss['department_name']
+                             ?
+                             <span className="text-danger">{errorss['department_name'][0]}</span>
+                             :
+                             ''
+                         }
+
+                     </div>
+                     <div className="mb-3">
+                         <label className="form-label">Designation Name<sup className="text-danger"><b>*</b></sup></label>
+                         <input
+                             type="text"
+                             name="designation_name"
+                             placeholder="-- Enter Designation Name --"
+                             className="form form-control"
+                             value={formData.designation_name}
+                             onChange={handleInputChange}
+                         />
+                         { errorss['designation_name']
+                             ?
+                             <span className="text-danger">{errorss['designation_name'][0]}</span>
+                             :
+                             ''
+                         }
+                     </div>
+
+                 </div>
+                 <div className="modal-footer">
+                     <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                     <button type="button" onClick={()=>saveForm(1)}  className="btn btn-primary">Save</button>
+                 </div>
+             </div>:''}
+             {screenStatus==2?
+             <div className="modal-content">
+                 <div className="modal-header">
+                     <h5 className="modal-title" id="staticBackdropLabel">User Details</h5>
+                     <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                 </div>
+                 <div className="modal-body">
+
+                     <div className="mb-3">
+                         <label className="form-label">Display Name<sup className="text-danger"><b>*</b></sup></label>
+                         <input
+                             type="text"
+                             className="form form-control"
+                             name="display_name"
+                             placeholder="-- Enter Display Name --"
+                             value={formData.display_name}
+                             onChange={handleInputChange}
+                         />
+                         { errorss['display_name']
+                             ?
+                         <span className="text-danger">{errorss['display_name'][0]}</span>
+                             :
+                             ''
+                         }
+
+                     </div>
+
+                     <div className="mb-3">
+                         <label className="form-label">Email<sup className="text-danger"><b>*</b></sup> </label>
+                         <input
+                             type="email"
+                             name="email"
+                             placeholder="-- Enter Email --"
+                             className="form form-control"
+                             value={formData.email}
+                             onChange={handleInputChange}
+                         />
+                         { errorss['email']
+                             ?
+                             <span className="text-danger">{errorss['email'][0]}</span>
+                             :
+                             ''
+                         }
+                     </div>
+                     <div className="mb-3">
+                         <label className="form-label">Password<sup className="text-danger"><b>*</b></sup></label>
+                         <input
+                             type="password"
+                             name="password"
+                             placeholder="-- Enter password--"
+                             className="form form-control"
+                             value={formData.password}
+                             onChange={handleInputChange}
+                         />
+                         { errorss['password']
+                             ?
+                             <span className="text-danger">{errorss['password'][0]}</span>
+                             :
+                             ''
+                         }
+
+                     </div>
+                     <div className="mb-3">
+                         <label className="form-label">Status<sup className="text-danger"><b>*</b></sup></label>
+                         {/*<input
+                             type="text"
+                             name="department_name"
+                             placeholder="-- Enter Designation Name --"
+                             className="form form-control mb-3"
+                             value={formData.designation_name}
+                             onChange={handleInputChange}
+                         />*/}
 
                         <select name="status" onChange={handleChange} value={formData.status} className="form-select " aria-label="Default select example">
                             <option value="">-- Select Status --</option>
