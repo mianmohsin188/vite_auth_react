@@ -71,8 +71,8 @@ const AddCompanyModal = forwardRef((props, ref) => {
         permissions: []
     });
    const errors={};
-    const [errorss,setErrorss] = useState([]);
-    const [screenStatus,setSreenStatus] = useState(3);
+    var[errorss,setErrorss] = useState([]);
+    var[screenStatus,setSreenStatus] = useState(3);
     const [groupedPermissionsList,setgroupedPermissionsList] = useState([]);
 
 
@@ -194,7 +194,8 @@ const AddCompanyModal = forwardRef((props, ref) => {
 
              }).catch((error_data) => {
                  console.log(error_data.response.data.errors);
-                     setErrorss(error_data.response.data.errors);
+                 errorss = error_data.response.data.errors;
+                     setErrorss(errorss);
                      let screen_key_errors = ['company_name', 'branch_name', 'department_name', 'designation_name'];
                      let screen_key_errors_screen_2 = ['display_name', 'email', 'password', 'status'];
                      let screen_key_errors_screen_3 = ['permissions'];
@@ -202,15 +203,16 @@ const AddCompanyModal = forwardRef((props, ref) => {
                      if(errorss && Object.keys(errorss).length>0) {
                          Object.keys(errorss).forEach(value => {
                              if (screen_key_errors.includes(value)) {
-                                 setSreenStatus(1);
+                                 screenStatus = 1;
+                                 setSreenStatus(screenStatus);
                              }
                              else if (screen_key_errors_screen_2.includes(value)) {
-
-                                 setSreenStatus(2);
+                                 screenStatus = 2;
+                                 setSreenStatus(screenStatus);
                              }
                              else if (screen_key_errors_screen_3.includes(value)) {
-
-                                 setSreenStatus(3);
+                                 screenStatus = 3;
+                                 setSreenStatus(screenStatus);
 
                              }
                          })
