@@ -156,10 +156,15 @@ const UpdateCompaniesPermissions = forwardRef((props, ref) => {
                     if(alreadyPermissions.includes(value2.permission_id)){
                         value2.isChecked=true;
                     }
+                    else{
+                        if (value2.isChecked){
+                            delete value2.isChecked
+                        }
+                    }
                 })
             })
         })
-        console.log(requestPermissionsList);
+
 
 
 
@@ -187,6 +192,7 @@ const UpdateCompaniesPermissions = forwardRef((props, ref) => {
                     Swal.fire("Success", "Company Updated Successfully", "success");
                   //  props.companies();
                     props.updatePermissionModal.hide();
+
 
                 }).catch((error_data) => {
                     setErrorss(error_data.response.data.errors);
