@@ -182,6 +182,7 @@ const AddCompanyModal = forwardRef((props, ref) => {
                 })
             }
             else {
+                console.log(Object.keys(checkedItems));
                 formData.permissions = Object.keys(checkedItems).filter((key) => checkedItems[key] === true)
                 console.log(formData);
                  axios.post(import.meta.env.VITE_BASE_URL + import.meta.env.VITE_ADD_COMPANY_URL, formData).

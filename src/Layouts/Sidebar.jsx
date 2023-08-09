@@ -6,6 +6,11 @@ import companies from "../components/companies/Companies.jsx";
 function Sidebar(props) {
     const {isLoggedIn} = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user'));
+    const logout = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        window.location.reload();
+    }
     var user_permissions = [];
     if(isLoggedIn!==null && user!==null){
     user_permissions=user.permissions.data.map((item)=>{
@@ -95,16 +100,16 @@ function Sidebar(props) {
                            id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
                             <img src="https://github.com/mdo.png" alt="hugenerd" width="30" height="30"
                                  className="rounded-circle"/>
-                            <span className="d-none d-sm-inline mx-1">loser</span>
+                            <span className="d-none d-sm-inline mx-1">{user.name}</span>
                         </a>
                         <ul className="dropdown-menu dropdown-menu-dark text-small shadow">
-                            <li><a className="dropdown-item" href="#">New project...</a></li>
+                           {/* <li><a className="dropdown-item" href="#">New project...</a></li>
                             <li><a className="dropdown-item" href="#">Settings</a></li>
-                            <li><a className="dropdown-item" href="#">Profile</a></li>
-                            <li>
-                                <hr className="dropdown-divider"/>
-                            </li>
-                            <li><a className="dropdown-item"  href="#">Sign out</a></li>
+                            <li><a className="dropdown-item" href="#">Profile</a></li>*/}
+                                {/*<li>
+                                    <hr className="dropdown-divider"/>
+                                </li>*/}
+                            <li><a onClick={logout} className="dropdown-item"  href="#">Sign out</a></li>
                         </ul>
                     </div>
                 </div>

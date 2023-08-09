@@ -12,7 +12,7 @@ function Navbar() {
     return (
         <>
             {/* A JSX comment */}
-            <nav className="navbar navbar-expand-lg navbar-dark bg-dark p-3">
+            <nav className="navbar navbar-expand-lg navbar-dark bg-sidebar p-3">
                 <div className="container-fluid">
                     <a className="navbar-brand" href="#">Digitt</a>
                     <button className="navbar-toggler" type="button" data-bs-toggle="collapse"

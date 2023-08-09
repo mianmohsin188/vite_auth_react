@@ -5,6 +5,7 @@ import addCompanyModal from "./Add/AddCompanyModal.jsx";
 import { Modal } from 'bootstrap'
 import AddCompanyModal from "./Add/AddCompanyModal.jsx";
 import UpdateCompanyModal from "./Update/UpdateCompanyModal.jsx";
+import UpdateCompaniesPermissions from "./Update/UpdateCompaniesPermissions.jsx";
 
 
 function Companies(props) {
@@ -15,15 +16,22 @@ function Companies(props) {
 
     const [modal, setModal] = useState(null)
     const [updateDetailModal, setupdateDetailModal] = useState(null)
+    const [updatePermissionsModal, setupdatePermissionsModal] = useState(null)
+
     const exampleModal = useRef()
     const exampleUpdateDetailModal = useRef()
+    const exampleUpdatePermissionsModal = useRef()
+
     const companyModal = useRef()
     const updateDetailModalRef = useRef()
+    const updatePermissionsModalRef = useRef()
+
+
     const [groupedPermissions,setGroupedPermissions] = useState([]);
 
     const getCompanies = () => {
         setCompanies([]);
-        axios.get(import.meta.env.VITE_BASE_URL + import.meta.env.VITE_GET_ALL_COMPANIES_URL+'?page='+currentPage)
+        axios.get(import.meta.env.VITE_BASE_URL + import.meta.env.VITE_GET_ALL_COMPANIES_URL+'?page='+currentPage+'&flag=false')
             .then((response) => {
                 setCompanies(response.data.data);
                 setMeta(response.data.meta);
@@ -81,7 +89,29 @@ function Companies(props) {
         updateDetailModal.show();
     }
     const editPermission = (company) => {
-        alert(company.id);
+        updatePermissionsModalRef.current.resetCheckedItemsData();
+        axios.get(import.meta.env.VITE_BASE_URL + import.meta.env.VITE_USER_PERMISSIONS_URL+'?flag=true&user_id='+company.user_id)
+            .then((response) => {
+                let permissions_array = [];
+                response.data.data.forEach((item) => {
+
+                    updatePermissionsModalRef.current.setCheckedItemsData(item.id);
+
+                })
+                updatePermissionsModalRef.current.setPermissions(groupedPermissions)
+                updatePermissionsModalRef.current.setUserID(company.user_id)
+                updatePermissionsModal.show();
+            })
+
+
+            .catch((error) => {
+
+            });
+
+     //   updatePermissionsModalRef.current.setUserPermissions()
+
+
+
     }
 
     useEffect(() => {
@@ -92,7 +122,10 @@ function Companies(props) {
         ),
         setupdateDetailModal(
             new Modal(exampleUpdateDetailModal.current)
-        )
+        ),
+            setupdatePermissionsModal(
+                new Modal(exampleUpdatePermissionsModal.current)
+            )
     }, []);
 
 
@@ -105,7 +138,7 @@ function Companies(props) {
                     <div className="text-center">
                         {companies.length > 0
                             ?
-                        <p>Showing results {meta.pagination.current_page} to {meta.pagination.count} of {meta.pagination.total}</p>:''}
+                        <p>Showing results {meta.pagination?.current_page} to {meta?.pagination?.count} of {meta?.pagination?.total}</p>:''}
                     </div>
                 </div>
                 <div className="col-12">
@@ -157,7 +190,7 @@ function Companies(props) {
                             <td>
 
                                 <div>
-                                    <span onClick={()=>editPermission(company)} className="fa fa-1x fa-eye m-2"></span>
+                                    <span data-bs-toggle="modal" data-bs-target="#exampleUpdatePermissionsModal" onClick={()=>editPermission(company)} className="fa fa-1x fa-eye m-2"></span>
                                     <span data-bs-toggle="modal" data-bs-target="#exampleUpdateDetailModal" onClick={()=>editDetail(company)}  className="fa fa-1x fa-pencil"></span>
                                 </div>
                             </td>
@@ -169,14 +202,19 @@ function Companies(props) {
                     </tbody>
                 </table>
             </div>
-            <div className="modal fade "  ref={exampleModal} id="addCompanyModal" tabIndex="-1" aria-labelledby="exampleModalLabel"  aria-hidden="true">
-            <div className="modal-dialog modal-xl">
+            <div className="modal fade " data-bs-backdrop="static"  ref={exampleModal} id="addCompanyModal" tabIndex="-1" aria-labelledby="exampleModalLabel"  aria-hidden="true">
+            <div className="modal-dialog modal-xl" data-bs-backdrop="static">
                 <AddCompanyModal companies={getCompanies} companyModal={modal} ref={companyModal}></AddCompanyModal>
             </div>
             </div>
-            <div className="modal fade "  ref={exampleUpdateDetailModal} id="addCompanyModal" tabIndex="-1" aria-labelledby="updateDetailModalLabel"  aria-hidden="true">
-                <div className="modal-dialog modal-xl">
+            <div className="modal fade " data-bs-backdrop="static"  ref={exampleUpdateDetailModal} id="addCompanyModal" tabIndex="-1" aria-labelledby="updateDetailModalLabel"  aria-hidden="true">
+                <div className="modal-dialog modal-xl" data-bs-backdrop="static">
                     <UpdateCompanyModal ref={updateDetailModalRef} updateDetailModal={updateDetailModal} companies={getCompanies}></UpdateCompanyModal>
+                </div>
+            </div>
+            <div className="modal fade " data-bs-backdrop="static" ref={exampleUpdatePermissionsModal} id="addCompanyModal" tabIndex="-1" aria-labelledby="updatePermissionModalLabel"  aria-hidden="true">
+                <div className="modal-dialog modal-xl" data-bs-backdrop="static">
+                    <UpdateCompaniesPermissions ref={updatePermissionsModalRef} updatePermissionModal={updatePermissionsModal} companies={getCompanies}></UpdateCompaniesPermissions>
                 </div>
             </div>
         </>
