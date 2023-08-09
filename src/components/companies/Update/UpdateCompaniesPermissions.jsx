@@ -8,7 +8,7 @@ const UpdateCompaniesPermissions = forwardRef((props, ref) => {
     var [alreadyPermissions, setAlreadyPermissions] = useState([]);
     const [checkedItemss, setCheckedItemss] = useState({});
     const [user_id, setUser_id] = useState('');
-    var requestPermissionsList;
+    var [requestPermissionsList, setRequestPermissionsList] = useState([]);
     const [errorss,setErrorss] = useState([]);
     const handleMasterChange = (masterType) => {
 
@@ -40,11 +40,13 @@ const UpdateCompaniesPermissions = forwardRef((props, ref) => {
             alreadyPermissions=temp
             setAlreadyPermissions(alreadyPermissions)
 
+
          //   setAlreadyPermissions(alreadyPermissions.filter(val => !module_permissions.includes(val)));
 
             module_permissions.forEach((value2,index)=>{
                 alreadyPermissions.push(value2)
             })
+            console.log(alreadyPermissions)
         }
         else{
             let module_permissions = [];
@@ -57,6 +59,7 @@ const UpdateCompaniesPermissions = forwardRef((props, ref) => {
            temp=alreadyPermissions.filter(val => !module_permissions.includes(val));
            alreadyPermissions=temp
            setAlreadyPermissions(alreadyPermissions)
+            console.log(alreadyPermissions);
         }
     };
     const handleChildChange = (childId) => {
@@ -65,12 +68,13 @@ const UpdateCompaniesPermissions = forwardRef((props, ref) => {
             [childId]: !prevCheckedItems[childId]
         }));
         if(event.target.checked){
-            if (childId in alreadyPermissions) {
-
+            if ( alreadyPermissions.includes(childId)) {
+                alreadyPermissions.splice(alreadyPermissions.indexOf(childId), 1)
             }
             else{
                 alreadyPermissions.push(childId)
             }
+            console.log(alreadyPermissions)
 
         }
         else {
@@ -82,6 +86,7 @@ const UpdateCompaniesPermissions = forwardRef((props, ref) => {
                 alert("dfsfsjnghkjfbgdkgbfskjdg")
              //   alreadyPermissions.push(childId)
             }
+            console.log(alreadyPermissions)
         }
 
 
@@ -114,7 +119,9 @@ const UpdateCompaniesPermissions = forwardRef((props, ref) => {
         setgroupedPermissionsList(permissions)
     }
     const resetCheckedItemsData = () => {
-        setCheckedItems({})
+        setCheckedItems({});
+        setAlreadyPermissions([]);
+        setUser_id('');
     }
     const setCheckedItemsData = (child) => {
 
@@ -123,8 +130,10 @@ const UpdateCompaniesPermissions = forwardRef((props, ref) => {
             newCheckedItems[child] = !newCheckedItems[child];
             return newCheckedItems;
         })
+
      alreadyPermissions.push(child);
         setAlreadyPermissions(alreadyPermissions);
+        console.log(alreadyPermissions)
 
         //checkedItems[childId] = !checkedItems[childId];
     }
@@ -135,7 +144,12 @@ const UpdateCompaniesPermissions = forwardRef((props, ref) => {
         setUser_id(id);
     }
     const saveForm= () => {
+        console.log(alreadyPermissions)
+
+        requestPermissionsList=[];
+        setRequestPermissionsList(requestPermissionsList)
         requestPermissionsList=groupedPermissionsList;
+        setRequestPermissionsList(groupedPermissionsList)
         requestPermissionsList.forEach((value,index)=>{
             Object.keys(value).forEach((v,i)=>{
                 value[v].forEach((value2)=>{
@@ -145,6 +159,9 @@ const UpdateCompaniesPermissions = forwardRef((props, ref) => {
                 })
             })
         })
+        console.log(requestPermissionsList);
+
+
 
         let screen_key_errors = ['permissions'];
         if (alreadyPermissions.length == 0) {
