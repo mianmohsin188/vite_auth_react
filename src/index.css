@@ -4,3 +4,18 @@
 .card-header{
     background-color: rgba(0,0,0,0.18) !important;
 }
+
+.loader {
+    position: fixed;
+    left: 245px;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    background-color: rgba(0,0,0,0.15);
+}
+.spinner-border{
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    margin-left: 100px;
+}

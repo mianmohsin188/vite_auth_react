@@ -6,12 +6,13 @@ import { Modal } from 'bootstrap'
 import AddCompanyModal from "./Add/AddCompanyModal.jsx";
 import UpdateCompanyModal from "./Update/UpdateCompanyModal.jsx";
 import UpdateCompaniesPermissions from "./Update/UpdateCompaniesPermissions.jsx";
+import ReactPaginate from "react-paginate";
 
 
 function Companies(props) {
     const [companies, setCompanies] = useState([]);
     const [meta, setMeta] = useState({});
-    const [currentPage, setCurrentPage] = useState(1);
+
     const avatarUrl = "https://ui-avatars.com/api/?background=0D8ABC&color=fff&rounded=true&name=";
 
     const [modal, setModal] = useState(null)
@@ -29,14 +30,25 @@ function Companies(props) {
 
     const [groupedPermissions,setGroupedPermissions] = useState([]);
 
+
+
     const getCompanies = () => {
         setCompanies([]);
+        loader=true;
+        setLoader(loader)
         axios.get(import.meta.env.VITE_BASE_URL + import.meta.env.VITE_GET_ALL_COMPANIES_URL+'?page='+currentPage+'&flag=false')
             .then((response) => {
+                loader=false;
+                setLoader(loader);
                 setCompanies(response.data.data);
                 setMeta(response.data.meta);
+                currentPage=response.data.meta.pagination.current_page
+                setCurrentPage(currentPage);
+                setPageCount(response.data.meta.pagination.total_pages);
             })
             .catch((error) => {
+                loader=false;
+                setLoader(loader);
                 console.log(error);
             });
     }
@@ -89,9 +101,13 @@ function Companies(props) {
         updateDetailModal.show();
     }
     const editPermission = (company) => {
+        loader=true;
+        setLoader(loader);
         updatePermissionsModalRef.current.resetCheckedItemsData();
         axios.get(import.meta.env.VITE_BASE_URL + import.meta.env.VITE_USER_PERMISSIONS_URL+'?flag=true&user_id='+company.user_id)
             .then((response) => {
+                loader=false;
+                setLoader(loader);
                 let permissions_array = [];
                 response.data.data.forEach((item) => {
 
@@ -102,10 +118,9 @@ function Companies(props) {
                 updatePermissionsModalRef.current.setUserID(company.user_id)
                 updatePermissionsModal.show();
             })
-
-
             .catch((error) => {
-
+                loader=false;
+                setLoader(loader);
             });
 
      //   updatePermissionsModalRef.current.setUserPermissions()
@@ -113,6 +128,21 @@ function Companies(props) {
 
 
     }
+
+    var [currentPage, setCurrentPage] = useState(1);
+    const [pageCount, setPageCount] = useState(0);
+    const itemsPerPage = 10;
+
+    const handlePageClick = (currentPage) => {
+        alert(currentPage);
+
+
+
+
+
+    };
+
+
 
     useEffect(() => {
         getCompanies();
@@ -127,10 +157,22 @@ function Companies(props) {
                 new Modal(exampleUpdatePermissionsModal.current)
             )
     }, []);
+    const loaderSizeStyle={
+        width: "3rem",
+        height: "3rem"
+    }
+    var [loader,setLoader] = useState(false);
 
 
     return (
         <>
+            {loader &&
+            <div className="d-flex loader justify-content-center">
+                <div className="spinner-border text-primary" style={loaderSizeStyle} role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </div>
+            </div>
+            }
             <h2>Companies</h2>
 
             <div className="row">
@@ -158,6 +200,7 @@ function Companies(props) {
 
                     </tr>
                     </thead>
+
                     <tbody>
                     {companies.length > 0 && companies.map((company, index) => (
 
@@ -209,14 +252,15 @@ function Companies(props) {
             </div>
             <div className="modal fade " data-bs-backdrop="static"  ref={exampleUpdateDetailModal} id="addCompanyModal" tabIndex="-1" aria-labelledby="updateDetailModalLabel"  aria-hidden="true">
                 <div className="modal-dialog modal-xl" data-bs-backdrop="static">
-                    <UpdateCompanyModal ref={updateDetailModalRef} updateDetailModal={updateDetailModal} companies={getCompanies}></UpdateCompanyModal>
+                    <UpdateCompanyModal  ref={updateDetailModalRef} updateDetailModal={updateDetailModal} companies={getCompanies} loader={loader}></UpdateCompanyModal>
                 </div>
             </div>
             <div className="modal fade " data-bs-backdrop="static" ref={exampleUpdatePermissionsModal} id="addCompanyModal" tabIndex="-1" aria-labelledby="updatePermissionModalLabel"  aria-hidden="true">
                 <div className="modal-dialog modal-xl" data-bs-backdrop="static">
-                    <UpdateCompaniesPermissions ref={updatePermissionsModalRef} updatePermissionModal={updatePermissionsModal} companies={getCompanies}></UpdateCompaniesPermissions>
+                    <UpdateCompaniesPermissions ref={updatePermissionsModalRef} updatePermissionModal={updatePermissionsModal} companies={getCompanies} loader={loader} setLoader={setLoader}></UpdateCompaniesPermissions>
                 </div>
             </div>
+
         </>
     );
 }

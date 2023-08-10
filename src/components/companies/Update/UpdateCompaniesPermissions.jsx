@@ -146,6 +146,8 @@ const UpdateCompaniesPermissions = forwardRef((props, ref) => {
     const saveForm= () => {
         console.log(alreadyPermissions)
 
+        props.setLoader(true)
+
         requestPermissionsList=[];
         setRequestPermissionsList(requestPermissionsList)
         requestPermissionsList=groupedPermissionsList;
@@ -178,6 +180,8 @@ const UpdateCompaniesPermissions = forwardRef((props, ref) => {
             if(errors && Object.keys(errors).length>0) {
                 screen_key_errors.forEach(value => {
                     if (Object.keys(errors).includes(value)) {
+
+                        props.setLoader(false)
                         return false;
                     }
                 })
@@ -189,12 +193,16 @@ const UpdateCompaniesPermissions = forwardRef((props, ref) => {
                 }
                 axios.post(import.meta.env.VITE_BASE_URL + import.meta.env.VITE_COMPANY_PERMISSIONS_UPDATE_URL, formData).
                 then((response) => {
+
+                    props.setLoader(false)
                     Swal.fire("Success", "Company Updated Successfully", "success");
                   //  props.companies();
                     props.updatePermissionModal.hide();
 
 
                 }).catch((error_data) => {
+
+                    props.setLoader(false)
                     setErrorss(error_data.response.data.errors);
                 })
 
