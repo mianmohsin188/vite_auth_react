@@ -430,14 +430,6 @@ const AddCompanyModal = forwardRef((props, ref) => {
                      </div>
                      <div className="mb-3">
                          <label className="form-label">Status<sup className="text-danger"><b>*</b></sup></label>
-                         {/*<input
-                             type="text"
-                             name="department_name"
-                             placeholder="-- Enter Designation Name --"
-                             className="form form-control mb-3"
-                             value={formData.designation_name}
-                             onChange={handleInputChange}
-                         />*/}
 
                         <select name="status" onChange={handleChange} value={formData.status} className="form-select " aria-label="Default select example">
                             <option value="">-- Select Status --</option>

@@ -7,6 +7,7 @@ import AddCompanyModal from "./Add/AddCompanyModal.jsx";
 import UpdateCompanyModal from "./Update/UpdateCompanyModal.jsx";
 import UpdateCompaniesPermissions from "./Update/UpdateCompaniesPermissions.jsx";
 import ReactPaginate from "react-paginate";
+import {can} from "../../helpers/can.js";
 
 
 function Companies(props) {
@@ -157,22 +158,12 @@ function Companies(props) {
                 new Modal(exampleUpdatePermissionsModal.current)
             )
     }, []);
-    const loaderSizeStyle={
-        width: "3rem",
-        height: "3rem"
-    }
+
     var [loader,setLoader] = useState(false);
 
 
     return (
         <>
-            {loader &&
-            <div className="d-flex loader justify-content-center">
-                <div className="spinner-border text-primary" style={loaderSizeStyle} role="status">
-                    <span className="visually-hidden">Loading...</span>
-                </div>
-            </div>
-            }
             <h2>Companies</h2>
 
             <div className="row">
@@ -186,9 +177,12 @@ function Companies(props) {
                 <div className="col-12">
                     <div className="fa fa-refresh bg-primary p-2 text-white" onClick={getCompanies}></div>
                     <div className="float-end">
+                        {can('add-company')?
                         <button type="button" onClick={()=>addCompany()} className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
                             Add Company
                         </button>
+                            :''
+                        }
                     </div>
                 </div>
 
@@ -231,11 +225,14 @@ function Companies(props) {
                             </td>
 
                             <td>
+                                {can('update-company')?
 
                                 <div>
                                     <span data-bs-toggle="modal" data-bs-target="#exampleUpdatePermissionsModal" onClick={()=>editPermission(company)} className="fa fa-1x fa-eye m-2"></span>
                                     <span data-bs-toggle="modal" data-bs-target="#exampleUpdateDetailModal" onClick={()=>editDetail(company)}  className="fa fa-1x fa-pencil"></span>
                                 </div>
+                                    :''
+                                }
                             </td>
 
 

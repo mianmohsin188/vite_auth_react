@@ -9,7 +9,7 @@ import 'font-awesome/css/font-awesome.min.css';
 import {BrowserRouter} from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
-import "./helpers/requestInterceptor.jsx"
+
 
 
 
