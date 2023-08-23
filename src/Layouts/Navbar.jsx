@@ -12,9 +12,8 @@ function Navbar() {
     return (
         <>
             {/* A JSX comment */}
-            <nav className="navbar navbar-expand-lg navbar-dark bg-sidebar p-3">
+            <nav className="navbar navbar-expand-lg">
                 <div className="container-fluid">
-                    <a className="navbar-brand" href="#">Digitt</a>
                     <button className="navbar-toggler" type="button" data-bs-toggle="collapse"
                             data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false"
                             aria-label="Toggle navigation">
@@ -31,7 +30,8 @@ function Navbar() {
                                     <img src={image_source} width="30" height="30"/> {user.name}
                                 </a>
                                 <ul className="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    <li><a className="dropdown-item" onClick={logout} href="#">Logout</a></li>
+                                    <li>
+                                        <a className="dropdown-item" onClick={logout} href="#">Logout</a></li>
                                 </ul>
                             </li>
                         </ul>

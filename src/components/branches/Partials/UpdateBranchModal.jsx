@@ -18,14 +18,21 @@ const UpdateBranchModal = forwardRef((props, ref) => {
         status: '',
     });
    const errors={};
+   const user=JSON.parse(localStorage.getItem('user'));
     var[errorss,setErrorss] = useState([]);
     const [companies, setCompanies] = useState([]);
 
     const saveForm = () => {
         errorss=[];
         setErrorss(errorss);
-        let screen_key_errors = ['name','company_id','status'];
-            if (formData.name == '') {
+        if (user.user_type.slug=='maker') {
+            let screen_key_errors = ['name','company_id','status','maker_comment'];
+        }
+        else{
+            let screen_key_errors = ['name','company_id','status'];
+        }
+
+        if (formData.name == '') {
                     let temp =[];
                  temp.push("Branch Name is required");
                 errors['name']=temp;
@@ -43,7 +50,15 @@ const UpdateBranchModal = forwardRef((props, ref) => {
                 errors['status']=temp;
 //setErrors(errors);
             }
+        if (user.user_type.slug=='maker' && formData.maker_comment == '') {
+            let temp =[];
+            temp.push('Comment is required');
+            errors['maker_comment']=temp;
+//setErrors(errors);
+        }
             setErrorss(errors);
+        console.log(errors);
+        console.log(formData);
             if(errors && Object.keys(errors).length>0) {
                 screen_key_errors.forEach(value => {
                     if (Object.keys(errors).includes(value)) {
@@ -52,6 +67,11 @@ const UpdateBranchModal = forwardRef((props, ref) => {
                 })
             }
             else {
+                if (user.user_type.slug=='maker') {
+                    formData.operation = 9;
+                    formData.operation_type=11;
+                    setFormData(formData);
+                }
                 axios.patch(import.meta.env.VITE_BASE_URL + import.meta.env.VITE_GET_ALL_BRANCHES_URL+"/"+formData.id, formData)
                     .then((response) => {
                         Swal.fire("Success", "Branch Updated Successfully", "success");
@@ -207,6 +227,34 @@ const UpdateBranchModal = forwardRef((props, ref) => {
 
 
                      </div>
+                     {
+                         user.user_type.slug=='maker'?
+                         <div className="mb-3">
+                             <label className="form-label">Maker Comment<sup className="text-danger"><b>*</b></sup></label>
+
+                             <input
+                                 type="text"
+                                 className="form form-control"
+                                 name="maker_comment"
+                                 placeholder="-- Maker Comment --"
+                                 value={formData.maker_comment}
+                                 onChange={handleInputChange}
+                             />
+
+                             { errorss['maker_comment']
+                                 ?
+                                 <span className="text-danger">{errorss['maker_comment'][0]}</span>
+                                 :
+                                 ''
+                             }
+
+
+                         </div>
+                             :
+                             ''
+
+                     }
+
 
                  </div>
                  <div className="modal-footer">

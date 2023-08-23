@@ -10,7 +10,7 @@ function Main(props) {
             <div className="container-fluid">
                 <div className="row flex-nowrap">
                     <Sidebar></Sidebar>
-                    <div className="col py-3">
+                    <div className="col py-3 main-part">
                         {props.component}
                     </div>
                 </div>

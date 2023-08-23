@@ -19,11 +19,17 @@ const user = JSON.parse(localStorage.getItem('user'));
    const errors={};
     var[errorss,setErrorss] = useState([]);
     const [companies, setCompanies] = useState([]);
+    const [comments,setComments] = useState('');
 
     const saveForm = () => {
         errorss=[];
+        if(user.user_type.slug=='maker') {
+            formData.company_id = user.company
+        }
+        setFormData(formData);
+
         setErrorss(errorss);
-        let screen_key_errors = ['name','company_id','status'];
+        let screen_key_errors = ['name','company_id','status','maker_comment'];
             if (formData.name == '') {
                     let temp =[];
                  temp.push("Branch Name is required");
@@ -42,20 +48,36 @@ const user = JSON.parse(localStorage.getItem('user'));
                 errors['status']=temp;
 //setErrors(errors);
             }
+            if(user.user_type.slug=='maker'){
+                if(comments==''){
+                    let temp =[];
+                    temp.push('Maker comment is required');
+                    errors['maker_comment']=temp;
+                }
+
+            }
+
             setErrorss(errors);
             if(errors && Object.keys(errors).length>0) {
                 screen_key_errors.forEach(value => {
                     if (Object.keys(errors).includes(value)) {
+                        console.log(errors);
                         return false;
                     }
                 })
             }
             else {
+
                if ( user.user_type && user.user_type.slug!='super-admin')
                {
                    setFormData(formData.companyName = companyName);
+                   formData.maker_comment=comments;
+                   formData.operation=9;
+                   formData.company_id=user.company
+                   formData.operation_type=10;
+                   setFormData(formData);
                }
-                axios.post(import.meta.env.VITE_BASE_URL + import.meta.env.VITE_GET_ALL_BRANCHES_URL, formData)
+               axios.post(import.meta.env.VITE_BASE_URL + import.meta.env.VITE_GET_ALL_BRANCHES_URL, formData)
                     .then((response) => {
                         Swal.fire("Success", "Branch Added Successfully", "success");
                         props.branches();
@@ -78,6 +100,9 @@ const user = JSON.parse(localStorage.getItem('user'));
              [name]: value,
          }));
      };
+    const handleCommentChange = (e) => {
+        setComments(e.target.value);
+    };
      function handleChange(evt) {
          const value = evt.target.value;
          setFormData((prevData) => ({
@@ -108,6 +133,12 @@ const user = JSON.parse(localStorage.getItem('user'));
      useImperativeHandle(ref, () => ({
          setCompaniesData:  companyData,
          resetForm: handleFormReset,
+         setCompanyId: (id) => {
+             setFormData((prevData) => ({
+                 ...prevData,
+                 company_id: id,
+             }));
+         }
 
      }));
 
@@ -210,22 +241,22 @@ const user = JSON.parse(localStorage.getItem('user'));
 
 
                              </div>
-                             :
+                          :
                              <div className="mb-3">
-                                 <label className="form-label">Company<sup className="text-danger"><b>*</b></sup></label>
+                                 <label className="form-label">Maker Comment<sup className="text-danger"><b>*</b></sup></label>
 
                                  <input
-                                     disabled
                                      type="text"
                                      className="form form-control"
-                                     name="companyName"
-                                     placeholder="-- Company Name --"
-                                     value={companyName}
+                                     name="comments"
+                                     placeholder="-- Maker Comment --"
+                                     value={comments}
+                                     onChange={handleCommentChange}
                                  />
 
-                                 { errorss['companyName']
+                                 { errorss['maker_comment']
                                      ?
-                                     <span className="text-danger">{errorss['no_of_employees'][0]}</span>
+                                     <span className="text-danger">{errorss['maker_comment'][0]}</span>
                                      :
                                      ''
                                  }

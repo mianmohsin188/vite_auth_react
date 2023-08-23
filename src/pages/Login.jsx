@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import { useNavigate } from "react-router-dom";
-
+import illustration from "../assets/logoImg.svg";
+import logo from "../assets/logo.png";
 import axios from "axios";
 
 const Login = ({ childern }) => {
@@ -11,7 +12,7 @@ const Login = ({ childern }) => {
     const [errors, setErrors] = useState([]);
     var [screen, setScreen] = useState(1);
     const navigate = useNavigate();
-    const countdownTime = 5 * 60; // 5 minutes in seconds
+    const countdownTime = 1 * 60; // 5 minutes in seconds
     const [timeRemaining, setTimeRemaining] = useState(countdownTime);
     const minutes = Math.floor(timeRemaining / 60);
     const seconds = timeRemaining % 60;
@@ -40,6 +41,7 @@ const Login = ({ childern }) => {
             })
                 .then((res) => {
                     disableOTPSubmitButton=false;
+                    setOtp('')
                     setTimeRemaining(countdownTime);
 
                 })
@@ -186,89 +188,98 @@ const Login = ({ childern }) => {
 
         return (
             <div>
-                <img className="mt-2" src="https://digitt.com.pk/wp-content/uploads/2022/10/Digitt-logo-png-1.png"
-                     width="200px" height="60px" alt=""/>
-                <section className="vh-90">
+                <section className="vh-100" style={{ backgroundColor: "#f5f5f5", overflow: "hidden" }}>
                     <div className="container py-5 h-100">
 
                         <div className="row d-flex align-items-center justify-content-center h-100">
                             <div className="col-md-8 col-lg-7 col-xl-6">
                                 <img
-                                    src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.svg"
+                                    src={illustration}
                                     className="img-fluid" alt="Phone image"/>
                             </div>
                             <div className="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
-                                <h2 className="mb-4">Login</h2>
-                                {screen == 1 ?
-                                    <div className="form-outline mb-4">
-                                        <label className="form-label" htmlFor="form1Example13">Email<sup
-                                            className="text-danger"><b>*</b></sup></label>
-                                        <input type="email"
-                                               value={username} id="form1Example13"
-                                               placeholder="-- Enter Email address --"
-                                               className="form-control form-control-lg"
-                                               onChange={(e) => setUsername(e.target.value)}/>
-                                        <span className="text-danger">{errors['username']}</span>
-                                    </div>
-                                    : ''}
-                                {
-                                    screen == 2
-                                        ?
-                                        <>
-                                            <div className="form-outline mb-4">
-                                                <label className="form-label" htmlFor="form1Example13">OTP<sup
-                                                    className="text-danger"><b>*</b></sup></label>
-                                                <input
-                                                    type="number"
-                                                    value={otp}
-                                                    id="form1Example13"
-                                                    placeholder="-- Enter OTP --"
-                                                    className="form-control form-control-lg"
-                                                    onChange={(e) => setOtp(e.target.value)}/>
-                                                <span className="text-danger">{errors['otp']}</span>
-                                            </div>
-                                            {timeRemaining > 0 ? (
-                                                <h4 className="text-center p-2">
-                                                Time left to Expire OTP   {minutes}:{seconds.toString().padStart(2, '0')}
-                                                </h4>
-                                            ) : (
-
-                                                disableOTPSubmitButton= true,
-                                                <center> <button onClick={enableOTPSubmitButton} className="btn btn-dark btn-md w-20 mb-4 "> Resend OTP </button></center>
-                                            )}
-
-
-                                        </>
-                                        :
-                                        ''
-                                }
-
-                                {
-                                    screen == 3 ?
+                                <div className="login-block move-right">
+                                    <img  className="logo-login" src={logo} width="150px"/>
+                                    <h2 >Login</h2>
+                                    {screen == 1 ?
                                         <div className="form-outline mb-4">
-                                            <label className="form-label" htmlFor="form1Example23">Password<sup
-                                                className="text-danger"><b>*</b></sup></label>
-                                            <input type="password"
-                                                   id="form1Example23"
-                                                   placeholder="-- Enter Password --"
+
+                                            <input type="email"
+                                                   value={username} id="form1Example13"
+                                                   placeholder="-- Enter Email address --"
                                                    className="form-control form-control-lg"
-                                                   value={password}
-                                                   onChange={(e) => setPassword(e.target.value)}/>
-                                            <span className="text-danger">{errors['password']}</span>
+                                                   onChange={(e) => setUsername(e.target.value)}/>
+                                            <span className="text-danger">{errors['username']}</span>
                                         </div>
-                                        : ''
-                                }
+                                        : ''}
+                                    {
+                                        screen == 2
+                                            ?
+                                            <>
+                                                <div className="form-outline mb-4">
+                                                    {timeRemaining > 0 ? (
+                                                        <>
+                                                        <h4 className="expiry-time">
+                                                           OTP Expires in   {minutes}:{seconds.toString().padStart(2, '0')}
+                                                        </h4>
+                                                            <input
+                                                                type="number"
+                                                                value={otp}
+                                                                id="form1Example13"
+                                                                placeholder="-- Enter OTP --"
+                                                                className="form-control form-control-lg"
+                                                                onChange={(e) => setOtp(e.target.value)}/>
+                                                            <span className="text-danger">{errors['otp']}</span>
 
 
-                                {/*<div className="d-flex mb-4">
-                                    <div className="form-check">
-                                        <input className="form-check-input" type="checkbox" value="" id="form1Example3"/>
-                                        <label className="form-check-label" htmlFor="form1Example3"> Remember me </label>
-                                    </div>
-                                </div>*/}
+                                                        </>
 
-                                <button disabled={screen ==2 && disableOTPSubmitButton} onClick={handleLogin} className=" btn btn btn-primary btn-lg w-100">Sign in
-                                </button>
+                                                    ) : (
+
+                                                        disableOTPSubmitButton= true,
+                                                         <button onClick={enableOTPSubmitButton} className=" btn-refresh "> <i className="fa fa-refresh" aria-hidden="true"></i> Resend OTP </button>
+
+                                                    )
+
+                                                    }
+
+                                                </div>
+
+
+
+                                            </>
+                                            :
+                                            ''
+                                    }
+
+                                    {
+                                        screen == 3 ?
+                                            <div className="form-outline mb-4">
+                                                <input type="password"
+                                                       id="form1Example23"
+                                                       placeholder="-- Enter Password --"
+                                                       className="form-control form-control-lg"
+                                                       value={password}
+                                                       onChange={(e) => setPassword(e.target.value)}/>
+                                                <span className="text-danger">{errors['password']}</span>
+                                            </div>
+                                            : ''
+                                    }
+
+
+                                    {/*<div className="d-flex mb-4">
+                                        <div className="form-check">
+                                            <input className="form-check-input" type="checkbox" value="" id="form1Example3"/>
+                                            <label className="form-check-label" htmlFor="form1Example3"> Remember me </label>
+                                        </div>
+                                    </div>*/}
+                                    {
+                                        disableOTPSubmitButton==false? <button onClick={handleLogin} className=" btn btn-primary btn-lg w-100">Sign in</button>:''
+                                    }
+
+                                    {/*<button  disableOTPSubmitButton onClick={handleLogin} className=" btn btn btn-primary btn-lg w-100">Sign in
+                                    </button>*/}
+                                </div>
                             </div>
                         </div>
                     </div>

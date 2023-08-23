@@ -2,7 +2,7 @@ import React from 'react';
 
 function ProtectedRoute(props) {
     return (
-        <div></div>
+        <div ></div>
     );
 }
 
