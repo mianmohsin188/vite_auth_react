@@ -193,6 +193,15 @@ const UpdateCompaniesPermissions = forwardRef((props, ref) => {
                 }
                 axios.post(import.meta.env.VITE_BASE_URL + import.meta.env.VITE_COMPANY_PERMISSIONS_UPDATE_URL, formData).
                 then((response) => {
+                   /* axios.get(import.meta.env.VITE_BASE_URL + import.meta.env.VITE_PROFILE_URL)
+                        .then((responseUser) => {
+                            //  localStorage.setItem("token","Bearer "+token);
+                            localStorage.removeItem("user");
+                            localStorage.setItem("user", JSON.stringify(responseUser.data.data));
+
+                        }).catch((err) => {
+                        console.log(err);
+                    })*/
 
                     props.setLoader(false)
                     Swal.fire("Success", "Company Updated Successfully", "success");

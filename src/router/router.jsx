@@ -6,6 +6,7 @@ import Dashboard from "../components/Dashboard.jsx";
 import Companies from "../components/companies/Companies.jsx";
 import Branches from "../components/branches/Branches.jsx";
 import Swal from "sweetalert2";
+import Departments from "../components/departments/Departments.jsx";
 
 
 
@@ -20,6 +21,7 @@ function Router(props) {
                 <Route path="/" element={props.isLoggedIn===false ?  <Navigate to="/login"/>: <Main component={<Dashboard></Dashboard>}></Main>}/>
                 <Route path="/companies" element={props.isLoggedIn===false ? <Navigate to="/login"/>: <Main component={<Companies></Companies>}></Main>}/>
                 <Route path="/branches" element={props.isLoggedIn===false ? <Navigate to="/login"/>: <Main component={<Branches></Branches>}></Main>}/>
+                <Route path="/department" element={props.isLoggedIn===false ? <Navigate to="/login"/>: <Main component={<Departments></Departments>}></Main>}/>
                 <Route path="/login" element={props.isLoggedIn===false ? <Login></Login>: <Navigate to="/"/>}/>
                 <Route path="*" element={props.isLoggedIn===false ? <Navigate to="/login"/>: <Navigate to="/"/>}/>
 

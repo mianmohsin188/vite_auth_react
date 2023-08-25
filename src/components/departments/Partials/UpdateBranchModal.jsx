@@ -6,32 +6,33 @@ import Swal from "sweetalert2";
 import data from "bootstrap/js/src/dom/data.js";
 import modal from "bootstrap/js/src/modal.js"; // Import Bootstrap components
 
+const UpdateBranchModal = forwardRef((props, ref) => {
 
-const AddBranchModal = forwardRef((props, ref) => {
-const user = JSON.parse(localStorage.getItem('user'));
     const [formData, setFormData] = useState({
         name: '',
         branch_address: '',
+        maker_comment:'',
         company_id: '',
+        companyName:'',
         no_of_employees: '',
         status: '',
     });
    const errors={};
+   const user=JSON.parse(localStorage.getItem('user'));
     var[errorss,setErrorss] = useState([]);
     const [companies, setCompanies] = useState([]);
-    const [comments,setComments] = useState('');
 
     const saveForm = () => {
         errorss=[];
-        if(user.user_type.slug=='maker') {
-            formData.company_id = user.company;
-            setFormData(formData);
+        setErrorss(errorss);
+        if (user.user_type.slug=='maker') {
+            let screen_key_errors = ['name','company_id','status','maker_comment'];
+        }
+        else{
+            let screen_key_errors = ['name','company_id','status'];
         }
 
-
-        setErrorss(errorss);
-        let screen_key_errors = ['name','company_id','status','maker_comment'];
-            if (formData.name == '') {
+        if (formData.name == '') {
                     let temp =[];
                  temp.push("Branch Name is required");
                 errors['name']=temp;
@@ -49,39 +50,31 @@ const user = JSON.parse(localStorage.getItem('user'));
                 errors['status']=temp;
 //setErrors(errors);
             }
-            if(user.user_type.slug=='maker'){
-                if(comments==''){
-                    let temp =[];
-                    temp.push('Maker comment is required');
-                    errors['maker_comment']=temp;
-                }
-
-            }
-
+        if (user.user_type.slug=='maker' && formData.maker_comment == '') {
+            let temp =[];
+            temp.push('Comment is required');
+            errors['maker_comment']=temp;
+//setErrors(errors);
+        }
             setErrorss(errors);
+        console.log(errors);
+        console.log(formData);
             if(errors && Object.keys(errors).length>0) {
                 screen_key_errors.forEach(value => {
                     if (Object.keys(errors).includes(value)) {
-                        console.log(errors);
                         return false;
                     }
                 })
             }
             else {
-
-               if ( user.user_type && (user.user_type.slug!='super-admin')&&(user.user_type.slug!='admin'))
-               {
-                   setFormData(formData.companyName = companyName);
-                   formData.maker_comment=comments;
-                   formData.operation=9;
-                   formData.company_id=user.company
-                   formData.operation_type=10;
-                   setFormData(formData);
-               }
-               console.log(formData);
-               axios.post(import.meta.env.VITE_BASE_URL + import.meta.env.VITE_GET_ALL_BRANCHES_URL, formData)
+                if (user.user_type.slug=='maker') {
+                    formData.operation = 9;
+                    formData.operation_type=11;
+                    setFormData(formData);
+                }
+                axios.patch(import.meta.env.VITE_BASE_URL + import.meta.env.VITE_GET_ALL_BRANCHES_URL+"/"+formData.id, formData)
                     .then((response) => {
-                        Swal.fire("Success", "Branch Added Successfully", "success");
+                        Swal.fire("Success", "Branch Updated Successfully", "success");
                         props.branches();
                         props.branchModal.hide();
                     }).catch(errors => {
@@ -102,9 +95,6 @@ const user = JSON.parse(localStorage.getItem('user'));
              [name]: value,
          }));
      };
-    const handleCommentChange = (e) => {
-        setComments(e.target.value);
-    };
      function handleChange(evt) {
          const value = evt.target.value;
          setFormData((prevData) => ({
@@ -112,20 +102,17 @@ const user = JSON.parse(localStorage.getItem('user'));
              [evt.target.name]: value,
          }))
      }
-     const {companyName,setCompanyName} = useState('');
      const handleFormReset = () => {
          setFormData({
              name: '',
              branch_address: '',
+             maker_comment:'',
              company_id: '',
+             companyName:'',
              no_of_employees: '',
              status: '',
-             companyName:'',
-         });
-
+         })
          setErrorss({});
-         setCompanies([]);
-
      };
      const companyData = (companies) => {
          setCompanies(companies)
@@ -135,19 +122,8 @@ const user = JSON.parse(localStorage.getItem('user'));
      // Expose functions to parent using useImperativeHandle
      useImperativeHandle(ref, () => ({
          setCompaniesData:  companyData,
-         resetForm: handleFormReset,
-         setCompanyId: (id) => {
-             setFormData((prevData) => ({
-                 ...prevData,
-                 company_id: id,
-             }));
-         },
-         setCompanyName: (name) => {
-             setFormData((prevData) => ({
-                 ...prevData,
-                 companyName: name,
-             }));
-         }
+         resetErrors: handleFormReset,
+         setFormData: setFormData
 
      }));
 
@@ -219,7 +195,7 @@ const user = JSON.parse(localStorage.getItem('user'));
                          <select name="status" onChange={handleChange} value={formData.status} className="form-select " aria-label="Default select example">
                              <option value="">-- Select Status --</option>
                              <option value="1">Active</option>
-                             <option value="2">Inactive</option>
+                             <option value="0">Inactive</option>
                          </select>
                          { errorss['status']
                              ?
@@ -230,53 +206,52 @@ const user = JSON.parse(localStorage.getItem('user'));
 
 
                      </div>
+                     <div className="mb-3">
+                         <label className="form-label">Company<sup className="text-danger"><b>*</b></sup></label>
+
+                         <input
+                             disabled
+                             type="text"
+                             className="form form-control"
+                             name="companyName"
+                             placeholder="-- Company Name --"
+                             value={formData.companyName}
+                         />
+
+                         { errorss['companyName']
+                             ?
+                             <span className="text-danger">{errorss['no_of_employees'][0]}</span>
+                             :
+                             ''
+                         }
+
+
+                     </div>
                      {
-                         (user.user_type && user.user_type.slug=='super-admin')
-                         ?
-                             <div className="mb-3">
-                                 <label className="form-label">Company<sup className="text-danger"><b>*</b></sup></label>
-                                 <select name="company_id" onChange={handleChange} value={formData.company_id} className="form-select " aria-label="Default select example">
-                                     <option value="">-- Select Company --</option>
-                                     {companies.map((company) => (
-                                         <option value={company.id}>{company.company_name}</option>
-                                     ))}
-                                 </select>
-                                 { errorss['company_id']
-                                     ?
-                                     <span className="text-danger">{errorss['company_id'][0]}</span>
-                                     :
-                                     ''
-                                 }
+                         user.user_type.slug=='maker'?
+                         <div className="mb-3">
+                             <label className="form-label">Maker Comment<sup className="text-danger"><b>*</b></sup></label>
 
+                             <input
+                                 type="text"
+                                 className="form form-control"
+                                 name="maker_comment"
+                                 placeholder="-- Maker Comment --"
+                                 value={formData.maker_comment}
+                                 onChange={handleInputChange}
+                             />
 
-                             </div>
-                          :
-                             (user.user_type && user.user_type.slug=='admin')
+                             { errorss['maker_comment']
                                  ?
-                             <div className="mb-3">
-                             </div>
+                                 <span className="text-danger">{errorss['maker_comment'][0]}</span>
                                  :
-                                 <div className="mb-3">
-                                     <label className="form-label">Maker Comment<sup className="text-danger"><b>*</b></sup></label>
-
-                                     <input
-                                         type="text"
-                                         className="form form-control"
-                                         name="comments"
-                                         placeholder="-- Maker Comment --"
-                                         value={comments}
-                                         onChange={handleCommentChange}
-                                     />
-
-                                     { errorss['maker_comment']
-                                         ?
-                                         <span className="text-danger">{errorss['maker_comment'][0]}</span>
-                                         :
-                                         ''
-                                     }
+                                 ''
+                             }
 
 
-                                 </div>
+                         </div>
+                             :
+                             ''
 
                      }
 
@@ -292,4 +267,4 @@ const user = JSON.parse(localStorage.getItem('user'));
     );
 });
 
-export default AddBranchModal;
+export default UpdateBranchModal;

@@ -13,6 +13,7 @@ import {can} from "../../helpers/can.js";
 function Companies(props) {
     const [companies, setCompanies] = useState([]);
     const [meta, setMeta] = useState({});
+   const user = JSON.parse(localStorage.getItem("user"));
 
     const avatarUrl = "https://ui-avatars.com/api/?background=0D8ABC&color=fff&rounded=true&name=";
 
@@ -146,6 +147,7 @@ function Companies(props) {
 
 
     useEffect(() => {
+        if (user)
         getCompanies();
         getAllGroupedPermissions()
         setModal(

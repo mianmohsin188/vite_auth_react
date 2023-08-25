@@ -49,6 +49,12 @@ function Sidebar(props) {
                                 <i className="fa fa-building "></i> <span
                                 className="ms-1 d-none d-sm-inline ">Branches</span></NavLink>
                         </li>:''}
+                        {user_permissions.length>0 && user_permissions.includes('departments') ?
+                            <li>
+                                <NavLink activeClassName='is-active' to="/department" className="nav-link px-0 align-middle">
+                                    <i className="fa fa-neuter "></i> <span
+                                    className="ms-1 d-none d-sm-inline ">Departments</span></NavLink>
+                            </li>:''}
                       {/*  <li>
                             <a href="#submenu2" data-bs-toggle="collapse"
                                className="nav-link px-0 align-middle ">

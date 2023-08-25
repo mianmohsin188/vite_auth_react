@@ -188,6 +188,17 @@ const AddCompanyModal = forwardRef((props, ref) => {
                  axios.post(import.meta.env.VITE_BASE_URL + import.meta.env.VITE_ADD_COMPANY_URL, formData).
              then((response) => {
                  console.log(response);
+
+                     /*axios.get(import.meta.env.VITE_BASE_URL + import.meta.env.VITE_PROFILE_URL)
+                         .then((responseUser) => {
+                             //  localStorage.setItem("token","Bearer "+token);
+                             localStorage.removeItem("user");
+                             localStorage.setItem("user", JSON.stringify(responseUser.data.data));
+
+                         }).catch((err) => {
+                         console.log(err);
+                     })*/
+
                  Swal.fire("Success", "Company Added Successfully", "success");
                  props.companies();
                  props.companyModal.hide();

@@ -7,10 +7,11 @@ import AddBranchModal from "../branches/Partials/AddBranchModal.jsx";
 import UpdateBranchModal from "./Partials/UpdateBranchModal.jsx";
 
 import {can} from "../../helpers/can.js";
+import AddDepartmentModal from "./Partials/AddDepartmentModal.jsx";
 
 
-function Branches(props) {
-    const [branches, setBranches] = useState([]);
+function Departments(props) {
+    const [departments, setDepartments] = useState([]);
     const [meta, setMeta] = useState({});
     var [loader,setLoader] = useState(false);
     var [currentPage, setCurrentPage] = useState(1);
@@ -19,7 +20,7 @@ function Branches(props) {
 
     const [modal, setModal] = useState(null);
     const exampleModal = useRef();
-    const branchModalRef = useRef();
+    const departmentModalRef = useRef();
 
     const [updateModal, setupdateModal] = useState(null);
     const branchUpdateModal = useRef();
@@ -27,15 +28,15 @@ function Branches(props) {
 
 
 
-    const getBranches = () => {
-        setBranches([]);
+    const getDepartments = () => {
+        setDepartments([]);
         loader=true;
         setLoader(loader)
-        axios.get(import.meta.env.VITE_BASE_URL + import.meta.env.VITE_GET_ALL_BRANCHES_URL+'?page='+currentPage+'&flag=false')
+        axios.get(import.meta.env.VITE_BASE_URL + import.meta.env.VITE_GET_ALL_DEPARTMENT_URL+'?page='+currentPage+'&flag=false')
             .then((response) => {
                 loader=false;
                 setLoader(loader);
-                setBranches(response.data.data);
+                setDepartments(response.data.data);
                 setMeta(response.data.meta);
                 currentPage=response.data.meta.pagination.current_page
                 setCurrentPage(currentPage);
@@ -48,7 +49,7 @@ function Branches(props) {
             });
     }
     const getBranchesPending = () => {
-        setBranches([]);
+        setDepartments([]);
         loader=true;
         setLoader(loader)
         let formData={
@@ -60,7 +61,7 @@ function Branches(props) {
                 loader=false;
                 setLoader(loader);
                 console.log(response.data.data);
-                setBranches(response.data.data);
+                setDepartments(response.data.data);
                 setMeta(response.data.meta);
                 currentPage=response.data.meta.pagination.current_page
                 setCurrentPage(currentPage);
@@ -73,7 +74,7 @@ function Branches(props) {
             });
     }
     const getBranchesRejected = () => {
-        setBranches([]);
+        setDepartments([]);
         loader=true;
         setLoader(loader)
         let formData={
@@ -84,7 +85,7 @@ function Branches(props) {
             .then((response) => {
                 loader=false;
                 setLoader(loader);
-                setBranches(response.data.data);
+                setDepartments(response.data.data);
 
                 setMeta(response.data.meta);
                 currentPage=response.data.meta.pagination.current_page
@@ -98,7 +99,7 @@ function Branches(props) {
             });
     }
     const getBranchesRejectedChecker = () => {
-        setBranches([]);
+        setDepartments([]);
         loader=true;
         setLoader(loader)
         let formData={
@@ -109,7 +110,7 @@ function Branches(props) {
             .then((response) => {
                 loader=false;
                 setLoader(loader);
-                setBranches(response.data.data);
+                setDepartments(response.data.data);
                 delete response.data.data;
                 setMeta(response.data.meta);
                 currentPage=response.data.meta.pagination.current_page
@@ -123,7 +124,7 @@ function Branches(props) {
             });
     }
     const getBranchesPendingChecker = () => {
-        setBranches([]);
+        setDepartments([]);
         loader=true;
         setLoader(loader)
         let formData={
@@ -134,7 +135,7 @@ function Branches(props) {
             .then((response) => {
                 loader=false;
                 setLoader(loader);
-                setBranches(response.data.data);
+                setDepartments(response.data.data);
                 delete response.data.data;
                 setMeta(response.data.meta);
                 currentPage=response.data.meta.pagination.current_page
@@ -148,7 +149,7 @@ function Branches(props) {
             });
     }
     const getBranchesApprovedChecker = () => {
-        setBranches([]);
+        setDepartments([]);
         loader=true;
         setLoader(loader)
         let formData={
@@ -159,7 +160,7 @@ function Branches(props) {
             .then((response) => {
                 loader=false;
                 setLoader(loader);
-                setBranches(response.data.data);
+                setDepartments(response.data.data);
                 delete response.data.data;
                 setMeta(response.data.meta);
                 currentPage=response.data.meta.pagination.current_page
@@ -184,17 +185,13 @@ function Branches(props) {
             });
     }
 
-    const addBranch = () => {
+    const addDepartment = () => {
 
-        branchModalRef.current.resetForm();
-        branchModalRef.current.setCompaniesData(companies);
+        departmentModalRef.current.resetForm();
+        departmentModalRef.current.setCompaniesData(companies);
         if(user.user_type.slug=='admin') {
-            branchModalRef.current.setCompanyId(user.company);
-            branchModalRef.current.setCompanyName(user.company_detail.name);
-        }
-        if(user.user_type.slug=='maker') {
-            branchModalRef.current.setCompanyId(user.company);
-            branchModalRef.current.setCompanyName(user.company_detail.name);
+            departmentModalRef.current.setCompanyId(user.company);
+            departmentModalRef.current.setCompanyName(user.company_detail.name);
         }
         modal.show();
     }
@@ -241,7 +238,7 @@ function Branches(props) {
             checker_comment:""
         }
         Swal.fire({
-            title: 'Process ',
+            title: 'Reason ',
             input: 'textarea',
             inputAttributes: {
                 autocapitalize: 'off',
@@ -327,12 +324,9 @@ function Branches(props) {
 
     useEffect(() => {
         {
-            user.user_type.slug=='checker'? getBranchesPendingChecker():getBranches()
+            user.user_type.slug=='checker'? getBranchesPendingChecker():getDepartments()
         }
-        {
-            (user.user_type.slug=='super-admin')? getCompanies():''
-        }
-
+        getCompanies()
         setModal(
             new Modal(exampleModal.current)
         ),
@@ -343,7 +337,7 @@ function Branches(props) {
 
     return (
         <>
-            <h2>Branches</h2>
+            <h2>Departments</h2>
             <div className="row">
                 <div className="col-12">
                     <div>
@@ -352,15 +346,15 @@ function Branches(props) {
                 </div>
                 <div className="col-12">
                     { user.user_type.slug=='super-admin'?
-                        <div className="fa fa-refresh bg-primary p-2 text-white" onClick={getBranches}></div>
+                        <div className="fa fa-refresh bg-primary p-2 text-white" onClick={getDepartments}></div>
                   :''
                     }
 
                     <div className="float-end">
                         {
-                            can('add-branch')?
-                            <button  type="button" onClick={()=>addBranch()} className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                Add Branch
+                            can('add-department')?
+                            <button  type="button" onClick={()=>addDepartment()} className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                Add Department
                             </button>:''
 
                         }
@@ -375,7 +369,7 @@ function Branches(props) {
                 <>
                 <ul className="nav branch-tabs nav-pills" id="pills-tab" role="tablist">
                     <li className="nav-item" role="presentation">
-                        <button onClick={getBranches} className="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">All Branches</button>
+                        <button onClick={getDepartments} className="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">All Branches</button>
                     </li>
                     <li className="nav-item" role="presentation">
                         <button onClick={getBranchesPending} className="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Pending Request</button>
@@ -659,37 +653,27 @@ function Branches(props) {
                     </thead>
 
                     <tbody>
-                    {branches.length > 0 && branches.map((branch, index) => (
+                    {departments.length > 0 && departments.map((department, index) => (
 
-                        <tr key={branch.id} className="align-middle">
+                        <tr key={department.id} className="align-middle">
 
                             <td>
 
                                 <div className="small text-medium-emphasis">
-                                    <div className="fw-bold">{branch.company?branch.company.name:''}</div>
-                                    <div><b>Branch Name : </b> {branch.branch_name}</div>
+                                    <div className="fw-bold">{department.company?department.company.name:''}</div>
+                                    <div><b>Department Name : </b> {department.department_name}</div>
                                 </div>
                             </td>
                             <td >
-                                <b>Branch Address: </b>
-                                {branch.branch_address==null
+                                <b>Branch Name: </b>
+                                {department.branch==null
                                     ?<div className="badge bg-danger">N/A</div>
                                     :
-                                    branch.branch_address
+                                    department.branch.name
                                 }
                             </td>
                             <td>
-                                <b>No. Of Employees: </b> {
-                                branch.no_of_employees==null
-                                    ?
-                                    <div className="badge bg-danger">N/A</div>
-                                    :
-                                    branch.no_of_employees
-                            }
-
-                            </td>
-                            <td>
-                                {branch.status==1?
+                                {department.status==1?
                                     <span className="badge bg-success">Active</span>
                                     :
                                     <span className="badge bg-danger">InActive</span>
@@ -700,9 +684,9 @@ function Branches(props) {
                             <td>
 
                                 {
-                                    can('update-branch')?
+                                    can('update-department')?
                                         <div>
-                                            <span data-bs-toggle="modal" data-bs-target="#branchUpdateModal" onClick={()=>editDetail(branch)}  className="fa fa-1x fa-pencil"></span>
+                                            <span data-bs-toggle="modal" data-bs-target="#branchUpdateModal" onClick={()=>editDetail(department)}  className="fa fa-1x fa-pencil"></span>
                                         </div>
                                         :
                                         ""
@@ -996,16 +980,16 @@ function Branches(props) {
 
             <div className="modal fade " data-bs-backdrop="static"  ref={exampleModal} id="addBranchModal" tabIndex="-1" aria-labelledby="exampleModalLabel"  aria-hidden="true">
                 <div className="modal-dialog modal-xl" data-bs-backdrop="static">
-                    <AddBranchModal branches={getBranches} branchModal={modal} ref={branchModalRef}></AddBranchModal>
+                    <AddDepartmentModal departments={getDepartments} departmentAddModal={modal} ref={departmentModalRef}></AddDepartmentModal>
                 </div>
             </div>
             <div className="modal fade " data-bs-backdrop="static"  ref={branchUpdateModal} id="addBranchModal" tabIndex="-1" aria-labelledby="branchUpdateModalLabel"  aria-hidden="true">
                 <div className="modal-dialog modal-xl" data-bs-backdrop="static">
-                    <UpdateBranchModal branches={getBranches} branchModal={updateModal} ref={branchUpdateModalRef}></UpdateBranchModal>
+                  {/*  <UpdateBranchModal branches={getDepartments} branchModal={updateModal} ref={branchUpdateModalRef}></UpdateBranchModal>*/}
                 </div>
             </div>
         </>
     );
 }
 
-export default Branches;
+export default Departments;

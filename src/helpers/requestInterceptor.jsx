@@ -41,6 +41,19 @@ axios.interceptors.response.use(
                 setTimeout(()=>{window.location.reload()},800);
             }
         }
+        else if(error.response.status===403){
+            Swal.fire("Error","Sorry! You are not authorized to perform this action","error");
+            axios.get(import.meta.env.VITE_BASE_URL + import.meta.env.VITE_PROFILE_URL)
+                .then((responseUser) => {
+                    //  localStorage.setItem("token","Bearer "+token);
+                    localStorage.removeItem("user");
+                    localStorage.setItem("user", JSON.stringify(responseUser.data.data));
+
+
+                }).catch((err) => {
+                console.log(err);
+            })
+        }
         return Promise.reject(error);
     }
 )
